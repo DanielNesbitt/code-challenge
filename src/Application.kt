@@ -5,8 +5,8 @@ import com.genedata.session.AUTH_PROVIDER
 import com.genedata.session.USER_SESSION
 import com.genedata.session.UserSession
 import com.genedata.session.validator
-import com.genedata.ws.Connect
 import com.genedata.ws.connectionManagerActor
+import com.genedata.ws.handleConnection
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
@@ -15,7 +15,6 @@ import io.ktor.features.*
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.cio.websocket.CloseReason
-import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.close
 import io.ktor.jackson.jackson
 import io.ktor.response.respond
@@ -28,8 +27,6 @@ import io.ktor.sessions.get
 import io.ktor.sessions.sessions
 import io.ktor.websocket.WebSockets
 import io.ktor.websocket.webSocket
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.channels.SendChannel
 import java.time.Duration
 import kotlin.collections.set
 
@@ -86,13 +83,7 @@ fun Application.module(testing: Boolean = false) {
             if (session == null) {
                 close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "No session"))
             } else {
-                val response = CompletableDeferred<SendChannel<Frame>>()
-                cm.send(Connect(session.user, this, response))
-                val connection = response.await()
-                while (true) {
-                    val frame = incoming.receive()
-                    connection.send(frame)
-                }
+                handleConnection(session.user, cm)
             }
         }
 

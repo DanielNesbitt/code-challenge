@@ -1,12 +1,8 @@
 package com.genedata.ws
 
-import com.genedata.session.UserSession
-import io.ktor.http.cio.websocket.CloseReason
 import io.ktor.http.cio.websocket.Frame
-import io.ktor.http.cio.websocket.close
 import io.ktor.http.cio.websocket.readText
-import io.ktor.sessions.get
-import io.ktor.sessions.sessions
+import io.ktor.http.cio.websocket.send
 import io.ktor.websocket.DefaultWebSocketServerSession
 import io.ktor.websocket.WebSocketServerSession
 import kotlinx.coroutines.CompletableDeferred
@@ -20,11 +16,17 @@ import kotlinx.coroutines.channels.actor
 
 sealed class ConnectionManagerMsg
 
+// TODO send something smaller than the whole session
 class Connect(
     val user: String,
     val ws: WebSocketServerSession,
-    val response: CompletableDeferred<SendChannel<Frame>>
+    val response: CompletableDeferred<ConnectionResult>
 ) : ConnectionManagerMsg()
+
+sealed class ConnectionResult : ConnectionManagerMsg()
+object UserAlreadyConnected : ConnectionResult()
+// TODO produce a better interface for the external channel used for receiving the ws frames
+class Connected(val input: SendChannel<Frame>) : ConnectionResult()
 
 
 @Suppress("EXPERIMENTAL_API_USAGE")
@@ -33,7 +35,7 @@ fun CoroutineScope.connectionManagerActor() = actor<ConnectionManagerMsg> {
 
     fun handleConnect(msg: Connect) {
         connections[msg.user] = msg.ws
-        msg.response.complete()
+        msg.response.complete(Connected(msg.ws.outgoing))
     }
 
     for (msg in channel) {
@@ -43,21 +45,23 @@ fun CoroutineScope.connectionManagerActor() = actor<ConnectionManagerMsg> {
     }
 }
 
-
-suspend fun DefaultWebSocketServerSession.connect() {
-    val session = call.sessions.get<UserSession>()
-    if (session == null) {
-        close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "No session"))
-    } else {
-        val cm = connectionManagerActor()
-        val response = CompletableDeferred<Int>()
-        cm.send(Connect(session.user, this, response))
-        val await = response.await()
-        send(Frame.Text("Hi from server"))
-        while (true) {
-            val frame = incoming.receive()
-            if (frame is Frame.Text) {
-                send(Frame.Text("Client said: " + frame.readText()))
+suspend fun DefaultWebSocketServerSession.handleConnection(user: String, cm: SendChannel<ConnectionManagerMsg>) {
+    val awaitConnection = CompletableDeferred<ConnectionResult>()
+    cm.send(Connect(user, this, awaitConnection))
+    when (val result = awaitConnection.await()) {
+        is UserAlreadyConnected -> {
+            // TODO send message to client to confirm closing existing connection
+            send("Already connected!")
+                // TODO listen for client confirmation
+            for (frame in incoming) {
+                when (frame) {
+                    is Frame.Text -> frame.readText()
+                }
+            }
+        }
+        is Connected -> {
+            for (frame in incoming) {
+                result.input.send(frame)
             }
         }
     }
