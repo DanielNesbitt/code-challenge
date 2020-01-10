@@ -99,7 +99,8 @@ fun Application.module(testing: Boolean = false) {
                     }
                 }
             }
-            foo.newGroup(name, pwd);
+            val newGroup = foo.newGroup(name, pwd)
+            call.respondText(newGroup.toString())
         }
 
         webSocket("/ws") {
