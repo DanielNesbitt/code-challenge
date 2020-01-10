@@ -1,6 +1,7 @@
 package com.genedata
 
 import com.fasterxml.jackson.databind.SerializationFeature
+import com.genedata.db.Foo
 import com.genedata.session.AUTH_PROVIDER
 import com.genedata.session.USER_SESSION
 import com.genedata.session.UserSession
@@ -10,16 +11,20 @@ import com.genedata.ws.handleConnection
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
+import io.ktor.application.log
 import io.ktor.auth.*
 import io.ktor.features.*
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.cio.websocket.CloseReason
 import io.ktor.http.cio.websocket.close
+import io.ktor.http.content.PartData
 import io.ktor.jackson.jackson
+import io.ktor.request.receiveMultipart
 import io.ktor.response.respond
 import io.ktor.response.respondText
 import io.ktor.routing.get
+import io.ktor.routing.post
 import io.ktor.routing.routing
 import io.ktor.sessions.Sessions
 import io.ktor.sessions.cookie
@@ -36,7 +41,6 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 @kotlin.jvm.JvmOverloads
 fun Application.module(testing: Boolean = false) {
     val cm = connectionManagerActor()
-
     install(Sessions) {
         cookie<UserSession>(USER_SESSION) {
             cookie.extensions["SameSite"] = "strict"
@@ -73,9 +77,29 @@ fun Application.module(testing: Boolean = false) {
         }
     }
 
+    val foo = Foo()
+
     routing {
+        trace { application.log.trace(it.buildText()) }
         get("/") {
             call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
+        }
+
+        post("/newGroup") {
+            val multipart = call.receiveMultipart()
+            var name = "";
+            var pwd = "";
+            while (true) {
+                val part = multipart.readPart() ?: break
+                if (part is PartData.FormItem) {
+                    if (part.name == "name") {
+                        name = part.value
+                    } else if (part.name == "password") {
+                        pwd = part.value
+                    }
+                }
+            }
+            foo.newGroup(name, pwd);
         }
 
         webSocket("/ws") {
