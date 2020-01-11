@@ -1,8 +1,8 @@
 package com.genedata.ws
 
+import io.ktor.http.cio.websocket.CloseReason
 import io.ktor.http.cio.websocket.Frame
-import io.ktor.http.cio.websocket.readText
-import io.ktor.http.cio.websocket.send
+import io.ktor.http.cio.websocket.close
 import io.ktor.websocket.DefaultWebSocketServerSession
 import io.ktor.websocket.WebSocketServerSession
 import kotlinx.coroutines.CompletableDeferred
@@ -50,14 +50,7 @@ suspend fun DefaultWebSocketServerSession.handleConnection(user: String, cm: Sen
     cm.send(Connect(user, this, awaitConnection))
     when (val result = awaitConnection.await()) {
         is UserAlreadyConnected -> {
-            // TODO send message to client to confirm closing existing connection
-            send("Already connected!")
-                // TODO listen for client confirmation
-            for (frame in incoming) {
-                when (frame) {
-                    is Frame.Text -> frame.readText()
-                }
-            }
+            close(CloseReason(4001, "User already connected."))
         }
         is Connected -> {
             for (frame in incoming) {

@@ -1,21 +1,11 @@
 package com.genedata
 
-import io.ktor.application.*
-import io.ktor.response.*
-import io.ktor.request.*
-import io.ktor.routing.*
-import io.ktor.http.*
-import io.ktor.sessions.*
-import io.ktor.features.*
-import io.ktor.websocket.*
-import io.ktor.http.cio.websocket.*
-import java.time.*
-import io.ktor.auth.*
-import io.ktor.client.features.auth.basic.*
-import com.fasterxml.jackson.databind.*
-import io.ktor.jackson.*
-import kotlin.test.*
-import io.ktor.server.testing.*
+import io.ktor.http.HttpMethod
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.testing.handleRequest
+import io.ktor.server.testing.withTestApplication
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class ApplicationTest {
     @Test
