@@ -1,9 +1,6 @@
 package com.genedata.db
 
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
@@ -16,6 +13,8 @@ object Groups : Table() {
     val name = varchar("name", 50)
     val password = varchar("password", 50)
 }
+
+data class Group(val id: UUID, val name: String, val password: String)
 
 object Questions: Table() {
     val id = uuid("id")
@@ -36,13 +35,25 @@ class Foo {
         }
     }
 
-    fun newGroup(n: String, p: String): UUID {
+    fun newGroup(newGroupName: String, newGroupPwd: String): UUID {
         return transaction {
             Groups.insert {
                 it[id] = UUID.randomUUID()
-                it[name] = n
-                it[password] = p
+                it[name] = newGroupName
+                it[password] = newGroupPwd
             } get Groups.id
+        }
+    }
+
+    fun getGroup(name: String): Group? {
+        return transaction {
+            Groups.select { Groups.name eq name }.map {
+                Group(
+                    id = it[Groups.id],
+                    name = it[Groups.name],
+                    password = it[Groups.password]
+                )
+            }.firstOrNull()
         }
     }
 }

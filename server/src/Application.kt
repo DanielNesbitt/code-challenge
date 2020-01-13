@@ -2,16 +2,11 @@ package com.genedata
 
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.genedata.db.Foo
-import com.genedata.session.AUTH_PROVIDER
 import com.genedata.session.USER_SESSION
 import com.genedata.session.UserSession
-import com.genedata.session.validator
 import com.genedata.ws.connectionManagerActor
 import com.genedata.ws.handleConnection
-import io.ktor.application.Application
-import io.ktor.application.call
-import io.ktor.application.install
-import io.ktor.application.log
+import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.features.*
 import io.ktor.http.ContentType
@@ -36,6 +31,15 @@ import java.time.Duration
 import kotlin.collections.set
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
+
+val foo = Foo()
+
+val fooValidator: suspend ApplicationCall.(UserPasswordCredential) -> Principal? = {
+    val group = foo.getGroup(it.name)
+    if (group != null && group.password == it.password)
+        UserIdPrincipal(it.name)
+    else null
+}
 
 @Suppress("unused") // Referenced in application.conf
 @kotlin.jvm.JvmOverloads
@@ -65,9 +69,10 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
     }
 
     install(Authentication) {
-        basic(AUTH_PROVIDER) {
-            realm = "Ktor Server"
-            validate(validator)
+        form {
+            userParamName = "name"
+            passwordParamName= "password"
+            validate(fooValidator)
         }
     }
 
@@ -76,8 +81,6 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
             enable(SerializationFeature.INDENT_OUTPUT)
         }
     }
-
-    val foo = Foo()
 
     routing {
         trace { application.log.trace(it.buildText()) }
@@ -112,12 +115,14 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
             }
         }
 
-        authenticate(AUTH_PROVIDER) {
-            get("/login") {
+        authenticate {
+            post("/login") {
                 val principal = call.principal<UserIdPrincipal>()
                 if (principal != null) {
                     call.sessions.set(USER_SESSION, UserSession(principal.name))
                     call.respond(HttpStatusCode.OK)
+                } else {
+                    call.respond(HttpStatusCode.Unauthorized)
                 }
             }
         }
