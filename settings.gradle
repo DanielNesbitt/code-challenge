@@ -1,1 +1,3 @@
 rootProject.name = "code-challenge"
+include 'server'
+include 'client'

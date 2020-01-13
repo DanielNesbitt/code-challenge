@@ -13,9 +13,8 @@ import kotlin.reflect.jvm.javaType
 /**
  * @author Daniel Nesbitt
  */
-class TSGenerator(
-    klasses: Iterable<KClass<*>>
-) {
+class TSGenerator(klasses: Iterable<KClass<*>>) {
+
     private val typeConverter = TypeConverter()
     private val visitedClasses = mutableSetOf<KClass<*>>()
     private val definitions = mutableListOf<String>()
@@ -75,11 +74,11 @@ class TSGenerator(
                 Pair(propertyName, propertyType.typeName)
             }.toMutableList()
 
-        val reduxAction = klass.findAnnotation<ReduxAction>() != null
+        val isReduxAction = klass.findAnnotation<ReduxAction>() != null
 
         val lines = mutableListOf<String>()
 
-        if (reduxAction) {
+        if (isReduxAction) {
             lines.add("export const ${klass.simpleName}Type = '${klass.simpleName}'")
             properties.add(Pair("type", "typeof ${klass.simpleName}Type"))
         }

@@ -39,7 +39,7 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 @Suppress("unused") // Referenced in application.conf
 @kotlin.jvm.JvmOverloads
-fun Application.module(testing: Boolean = false) {
+fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
     val cm = connectionManagerActor()
     install(Sessions) {
         cookie<UserSession>(USER_SESSION) {
