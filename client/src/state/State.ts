@@ -18,6 +18,14 @@ type Actions = LoginSuccessful;
 type ActionWithId<T = string> = Action<T>;
 type LoginSuccessfulAction = ActionWithId<typeof LoginSuccessfulType>
 
+export function loginSuccessfulAction(id: string, name: string): LoginSuccessful {
+    return {
+        type: LoginSuccessfulType,
+        id,
+        name,
+    };
+}
+
 const reducer = (state: ApplicationState = {}, action: Actions) => {
     switch (action.type) {
         case LoginSuccessfulType: {
@@ -31,7 +39,7 @@ const reducer = (state: ApplicationState = {}, action: Actions) => {
 };
 
 // -------------------- Store Enhancers --------------------
-
+const __DEV__ = true;       // todo
 const enhancers = [applyMiddleware()];
 if (__DEV__) {
     const {__REDUX_DEVTOOLS_EXTENSION__: devToolsExtension} = window as any;

@@ -29,6 +29,7 @@ const AppView: React.FC = () => {
                 ? <Routing/>
                 : <Login/>
             }
+            {user ? <h1>{user}</h1> : null}
         </div>
     );
 };

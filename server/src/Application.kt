@@ -120,7 +120,7 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
                 val principal = call.principal<UserIdPrincipal>()
                 if (principal != null) {
                     call.sessions.set(USER_SESSION, UserSession(principal.name))
-                    call.respond(HttpStatusCode.OK)
+                    call.respond(HttpStatusCode.OK, principal.name)
                 } else {
                     call.respond(HttpStatusCode.Unauthorized)
                 }
