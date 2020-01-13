@@ -1,26 +1,40 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import {Route, Router, Switch} from "react-router";
+import {createBrowserHistory} from 'history';
+import {Home} from "./routes/Home";
+import {Question} from "./routes/Question";
+import {Provider} from "react-redux";
+import {store, useTypedSelector} from "./state/State";
+import {Login} from "./routes/Login";
 
-const App: React.FC = () => {
+const history = createBrowserHistory();
+
+const Routing: React.FC = () => <Router history={history}>
+    <Switch>
+        <Route path="/question/:id">
+            <Question/>
+        </Route>
+        <Route path="/">
+            <Home/>
+        </Route>
+    </Switch>
+</Router>;
+
+const AppView: React.FC = () => {
+    const {user} = useTypedSelector(state => state);
     return (
         <div className="App">
-            <header className="App-header">
-                <img src={logo} className="App-logo" alt="logo"/>
-                <p>
-                    Edit <code>src/App.tsx</code> and save to reload.
-                </p>
-                <a
-                    className="App-link"
-                    href="https://reactjs.org"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    Learn React
-                </a>
-            </header>
+            {!!user
+                ? <Routing/>
+                : <Login/>
+            }
         </div>
     );
-}
+};
 
-export default App;
+export const App: React.FC = () => (
+    <Provider store={store}>
+        <AppView/>
+    </Provider>
+);
