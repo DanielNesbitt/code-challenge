@@ -108,8 +108,12 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
                     }
                 }
             }
-            val newGroup = db.newGroup(name, pwd)
-            call.respondText(newGroup.toString())
+            try {
+                val newGroup = db.newGroup(name, pwd)
+                call.respondText("Group ${newGroup} created.")
+            } catch (th: Throwable) {
+                call.respond(HttpStatusCode.BadRequest, th.message ?: "")
+            }
         }
 
         authenticate("formAuth") {
@@ -119,7 +123,7 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
                     call.sessions.set(USER_SESSION, UserSession(principal.name))
                     call.respond(HttpStatusCode.OK, principal.name)
                 } else {
-                    call.respond(HttpStatusCode.Unauthorized)
+                    call.respond(HttpStatusCode.Unauthorized, "Invalid credentials")
                 }
             }
 

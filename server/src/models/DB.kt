@@ -2,19 +2,18 @@ package com.genedata.db
 
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.util.*
 
 /**
  * @author Alice Li
  */
 
 object Groups : Table() {
-    val id = uuid("id")
+    val id = integer("id").autoIncrement().primaryKey()
     val name = varchar("name", 50)
     val password = varchar("password", 50)
 }
 
-data class Group(val id: UUID, val name: String, val password: String)
+data class Group(val id: Int, val name: String, val password: String)
 
 object Questions: Table() {
     val id = uuid("id")
@@ -32,22 +31,18 @@ class DB {
         Database.connect("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", driver = "org.h2.Driver")
         transaction {
             SchemaUtils.create(Groups, Questions, Scores)
-            // todo remove
-            Groups.insert {
-                it[id] = UUID.randomUUID()
-                it[name] = "udo"
-                it[password] = "udo"
-            }
         }
     }
 
-    fun newGroup(newGroupName: String, newGroupPwd: String): UUID {
+    fun newGroup(newGroupName: String, newGroupPwd: String): String {
         return transaction {
+            if (Groups.slice(Groups.name).selectAll().map{ it[Groups.name] }.toSet().contains(newGroupName)) {
+                throw RuntimeException("Group name ${newGroupName} already in use.")
+            }
             Groups.insert {
-                it[id] = UUID.randomUUID()
                 it[name] = newGroupName
                 it[password] = newGroupPwd
-            } get Groups.id
+            } get Groups.name
         }
     }
 

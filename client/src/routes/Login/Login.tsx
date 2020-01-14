@@ -1,6 +1,14 @@
 import React, {useState} from "react";
 import axios from "axios";
-import {IStackTokens, PrimaryButton, Spinner, SpinnerSize, Stack, TextField} from "office-ui-fabric-react";
+import {
+    DefaultButton,
+    IStackTokens,
+    PrimaryButton,
+    Spinner,
+    SpinnerSize,
+    Stack,
+    TextField
+} from "office-ui-fabric-react";
 import {useDispatch} from "react-redux";
 import {loginSuccessfulAction} from "./LoginModule";
 
@@ -8,33 +16,37 @@ export const Login: React.FC = () => {
     const [user, setUser] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [busy, setBusy] = useState<boolean>(false);
-    const [failed, setFailed] = useState(false);
+    const [errorMsg, setErrorMsg] = useState<string>("");
 
     const dispatch = useDispatch();
 
-    const submitAction = async () => {
-        setBusy(true);
-        setFailed(false);
-        try {
-            // Perform the fetch
-            const bodyFormData = new FormData();
-            bodyFormData.set("name", user);
-            bodyFormData.set("password", password);
-            let response = await axios({
-                method: 'post',
-                url: '/api/login',
-                data: bodyFormData,
-                headers: {'Content-Type': 'multipart/form-data' }
-            });
-            setBusy(false);
-            dispatch(loginSuccessfulAction(response.data, response.data));
-        } catch (e) {
-            setBusy(false);
-            setFailed(true);
-        }
+    const doLoginAction = (url: string) => {
+        return async() => {
+            setBusy(true);
+            setErrorMsg("");
+            try {
+                // Perform the fetch
+                const bodyFormData = new FormData();
+                bodyFormData.set("name", user);
+                bodyFormData.set("password", password);
+                let response = await axios({
+                    method: 'post',
+                    url: url,
+                    data: bodyFormData,
+                    headers: {'Content-Type': 'multipart/form-data' }
+                });
+                setBusy(false);
+                let foo = dispatch(loginSuccessfulAction(response.data, response.data));
+            } catch (e) {
+                setBusy(false);
+                setErrorMsg(e.response.data);
+            }
+        };
     };
 
-    const error = failed ? "Invalid credentials" : "";
+    const submitAction = doLoginAction("/api/login");
+    const createAction = doLoginAction("/api/newGroup");
+
 
     const tokens: IStackTokens = {
         childrenGap: 10,
@@ -45,11 +57,12 @@ export const Login: React.FC = () => {
             <TextField label="Name" value={user} onChange={
                 (e, v) => setUser(v ?? '')
             }/>
-            <TextField label="Password" type="password" value={password} errorMessage={error} onChange={(
+            <TextField label="Password" type="password" value={password} errorMessage={errorMsg} onChange={(
                 e, v) => setPassword(v ?? '')
             }/>
             <Stack horizontal verticalAlign="center" tokens={tokens}>
                 <PrimaryButton text="Login" disabled={busy} onClick={submitAction}/>
+                <DefaultButton text ="Create User" disabled={busy} onClick={createAction}/>
                 {busy ? <Spinner size={SpinnerSize.medium}/> : null}
             </Stack>
         </Stack>
