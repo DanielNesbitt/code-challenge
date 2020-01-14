@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import axios from "axios";
 import {IStackTokens, PrimaryButton, Spinner, SpinnerSize, Stack, TextField} from "office-ui-fabric-react";
 import {useDispatch} from "react-redux";
-import {loginSuccessfulAction} from "../state/State";
+import {loginSuccessfulAction} from "./LoginModule";
 
 export const Login: React.FC = () => {
     const [user, setUser] = useState<string>("");

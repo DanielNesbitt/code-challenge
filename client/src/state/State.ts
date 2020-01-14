@@ -1,40 +1,8 @@
-import {Action, applyMiddleware, compose, createStore} from 'redux'
+import {applyMiddleware, combineReducers, compose, createStore} from 'redux'
 import {TypedUseSelectorHook, useSelector} from "react-redux";
+import {LoginState, module as LoginModule} from "../routes/Login/LoginModule";
 
-export type ApplicationState = {
-    user?: string;
-}
-
-export const LoginSuccessfulType = 'LoginSuccessful';
-interface LoginSuccessful extends Action<typeof LoginSuccessfulType> {
-    type: typeof LoginSuccessfulType;
-    id: string;
-    name: string;
-}
-
-type Actions = LoginSuccessful;
-
-type LoginSuccessfulAction = Action<typeof LoginSuccessfulType>
-
-export function loginSuccessfulAction(id: string, name: string): LoginSuccessful {
-    return {
-        type: LoginSuccessfulType,
-        id,
-        name,
-    };
-}
-
-const reducer = (state: ApplicationState = {}, action: Actions) => {
-    switch (action.type) {
-        case LoginSuccessfulType: {
-            return {
-                ...state,
-                user: action.name
-            };
-        }
-    }
-    return state;
-};
+export type ApplicationState = LoginState;
 
 // -------------------- Store Enhancers --------------------
 
@@ -53,7 +21,7 @@ if (__DEV__) {
 
 // -------------------- Store --------------------
 
-export const store = createStore(reducer, {}, compose(...enhancers),);
+export const store = createStore(combineReducers({[LoginModule.name]: LoginModule.reducer}), {}, compose(...enhancers),);
 
 // -------------------- Selectors --------------------
 

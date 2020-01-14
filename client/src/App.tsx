@@ -6,7 +6,8 @@ import {Home} from "./routes/Home";
 import {Question} from "./routes/Question";
 import {Provider} from "react-redux";
 import {store, useTypedSelector} from "./state/State";
-import {Login} from "./routes/Login";
+import {Login} from "./routes/Login/Login";
+import {userSelector} from "./routes/Login/LoginModule";
 
 const history = createBrowserHistory();
 
@@ -22,7 +23,7 @@ const Routing: React.FC = () => <Router history={history}>
 </Router>;
 
 const AppView: React.FC = () => {
-    const {user} = useTypedSelector(state => state);
+    const user = useTypedSelector(userSelector);
     return (
         <div className="App">
             {!!user

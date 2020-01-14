@@ -33,8 +33,7 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 val db = DB()
 
 val validator: suspend ApplicationCall.(UserPasswordCredential) -> Principal? = {
-    val group = db.getGroup(it.name)
-    if (group != null && group.password == it.password)
+    if (it.name == it.password)
         UserIdPrincipal(it.name)
     else null
 }
@@ -89,8 +88,8 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
 
         post("/newGroup") {
             val multipart = call.receiveMultipart()
-            var name = "";
-            var pwd = "";
+            var name = ""
+            var pwd = ""
             while (true) {
                 val part = multipart.readPart() ?: break
                 if (part is PartData.FormItem) {
