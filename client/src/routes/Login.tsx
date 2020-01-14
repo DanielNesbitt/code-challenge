@@ -5,6 +5,10 @@ import {useDispatch} from "react-redux";
 import {loginSuccessfulAction} from "../state/State";
 import './Login.css';
 
+function ensureNonNull(s: string | undefined) {
+    return s ? s : "";
+}
+
 export const Login: React.FC = () => {
     const [user, setUser] = useState<string | undefined>("");
     const [password, setPassword] = useState<string | undefined>("");
@@ -18,9 +22,14 @@ export const Login: React.FC = () => {
         setFailed(false);
         try {
             // Perform the fetch
-            let response = await axios.post<string>('/api/login', {
-                name: user,
-                password: password
+            const bodyFormData = new FormData();
+            bodyFormData.set("name", ensureNonNull(user));
+            bodyFormData.set("password", ensureNonNull(password));
+            let response = await axios({
+                method: 'post',
+                url: '/api/login',
+                data: bodyFormData,
+                headers: {'Content-Type': 'multipart/form-data' }
             });
             setBusy(false);
             dispatch(loginSuccessfulAction(response.data, response.data));
