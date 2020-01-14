@@ -19,18 +19,20 @@ import io.ktor.response.respondText
 import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.routing
-import io.ktor.sessions.Sessions
-import io.ktor.sessions.cookie
-import io.ktor.sessions.get
-import io.ktor.sessions.sessions
+import io.ktor.sessions.*
 import io.ktor.websocket.WebSockets
 import io.ktor.websocket.webSocket
+import java.security.SecureRandom
 import java.time.Duration
 import kotlin.collections.set
 
-fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
-
 val db = DB()
+
+fun main(args: Array<String>) {
+    db.newGroup("daniel", "daniel")
+    db.newGroup("alice", "alice")
+    io.ktor.server.netty.EngineMain.main(args)
+}
 
 val validator: suspend ApplicationCall.(UserPasswordCredential) -> Principal? = {
     val group = db.getGroup(it.name)
@@ -44,8 +46,13 @@ val validator: suspend ApplicationCall.(UserPasswordCredential) -> Principal? = 
 fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
     val cm = connectionManagerActor()
     install(Sessions) {
+        val random = SecureRandom()
+        val secretHashKey = ByteArray(20)
+        random.nextBytes(secretHashKey)
+
         cookie<UserSession>(USER_SESSION) {
             cookie.extensions["SameSite"] = "strict"
+            transform(SessionTransportTransformerMessageAuthentication(secretHashKey, "HmacSHA256"))
         }
     }
 
