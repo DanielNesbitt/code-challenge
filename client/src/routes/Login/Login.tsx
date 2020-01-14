@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import axios from "axios";
+import axios, {AxiosResponse} from "axios";
 import {
     DefaultButton,
     IStackTokens,
@@ -20,7 +20,13 @@ export const Login: React.FC = () => {
 
     const dispatch = useDispatch();
 
-    const doLoginAction = (url: string) => {
+    function dispatchLogin (response: AxiosResponse) {
+        dispatch(loginSuccessfulAction(response.data, response.data))
+    }
+    function showMessage (response: AxiosResponse) {
+        setErrorMsg(response.data);
+    }
+    const doLoginAction = (url: string, onComplete: Function) => {
         return async() => {
             setBusy(true);
             setErrorMsg("");
@@ -36,7 +42,7 @@ export const Login: React.FC = () => {
                     headers: {'Content-Type': 'multipart/form-data' }
                 });
                 setBusy(false);
-                let foo = dispatch(loginSuccessfulAction(response.data, response.data));
+                onComplete(response);
             } catch (e) {
                 setBusy(false);
                 setErrorMsg(e.response.data);
@@ -44,8 +50,8 @@ export const Login: React.FC = () => {
         };
     };
 
-    const submitAction = doLoginAction("/api/login");
-    const createAction = doLoginAction("/api/newGroup");
+    const submitAction = doLoginAction("/api/login", dispatchLogin);
+    const createAction = doLoginAction("/api/newGroup", showMessage);
 
 
     const tokens: IStackTokens = {
