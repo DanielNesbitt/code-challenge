@@ -2,7 +2,7 @@ import React from 'react';
 import './App.css';
 import {Route, Router, Switch} from "react-router";
 import {createBrowserHistory} from 'history';
-import {Home} from "./routes/Home";
+import {Home} from "./routes/Home/Home";
 import {Question} from "./routes/Question";
 import {Provider} from "react-redux";
 import {store, useTypedSelector} from "./state/State";

@@ -62,7 +62,7 @@ class TSGenerator(klasses: Iterable<KClass<*>>) {
 
     private fun generateInterface(klass: KClass<*>): String {
         val superTypes = klass.supertypes.filterNot { it.classifier in ignoredSuperclasses }
-        val extends = if (superTypes.isNotEmpty()) " extends " else "" +
+        var extends = if (superTypes.isNotEmpty()) " extends " else "" +
             superTypes.joinToString(separator = " & ") { convert(it).typeName }
 
         val properties = klass.declaredMemberProperties
@@ -79,10 +79,11 @@ class TSGenerator(klasses: Iterable<KClass<*>>) {
         val lines = mutableListOf<String>()
 
         if (isReduxAction) {
+            extends = extends + " extends Action<typeof ${klass.simpleName}Type>"
             lines.add("export const ${klass.simpleName}Type = '${klass.simpleName}';")
             properties.add(Pair("type", "typeof ${klass.simpleName}Type"))
         }
-        lines.add("interface ${klass.simpleName}$extends {")
+        lines.add("export interface ${klass.simpleName}$extends {")
         lines.addAll(properties.map { pair -> "    ${pair.first}: ${pair.second};" })
         lines.add("}")
 

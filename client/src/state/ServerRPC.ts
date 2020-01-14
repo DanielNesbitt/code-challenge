@@ -1,24 +1,26 @@
 // AUTO-GENERATED! Do not edit!
-export const RequestQuestionType = 'RequestQuestion';
+import {Action} from "redux";
 
-interface RequestQuestion {
+export const RequestQuestionsType = 'RequestQuestions';
+export interface RequestQuestions extends Action<typeof RequestQuestionsType> {
     questionId: number;
-    type: typeof RequestQuestionType;
+    type: typeof RequestQuestionsType;
 }
 
-export const QuestionType = 'Question';
-
-interface Question {
-    question: string;
+export interface QuestionEntry {
     questionId: number;
-    type: typeof QuestionType;
+    questionTitle: string;
+}
+
+export const QuestionsResponseType = 'QuestionsResponse';
+export interface QuestionsResponse extends Action<typeof QuestionsResponseType> {
+    questions: QuestionEntry[];
+    type: typeof QuestionsResponseType;
 }
 
 export const AnswerType = 'Answer';
-
-interface Answer {
+export interface Answer extends Action<typeof AnswerType> {
     answer: string;
-    options: { [key: string]: string };
     questionId: number;
     type: typeof AnswerType;
 }

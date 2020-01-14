@@ -9,7 +9,6 @@ export type State = {
 }
 
 const LoginSuccessfulType = 'LoginSuccessful';
-
 interface LoginSuccessful extends Action<typeof LoginSuccessfulType> {
     type: typeof LoginSuccessfulType;
     id: string;
@@ -23,7 +22,6 @@ export function loginSuccessfulAction(id: string, name: string): LoginSuccessful
         name,
     };
 }
-
 
 type Actions = LoginSuccessful;
 

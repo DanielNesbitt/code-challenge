@@ -9,33 +9,36 @@ import java.io.File
  * @author Daniel Nesbitt
  */
 @ReduxAction
-data class RequestQuestion(
+data class RequestQuestions(
     val questionId: Long
 )
 
-@ReduxAction
-data class Question(
+data class QuestionEntry(
     val questionId: Long,
-    val question: String
+    val questionTitle: String
+)
+
+@ReduxAction
+data class QuestionsResponse(
+    val questions: List<QuestionEntry>
 )
 
 @ReduxAction
 data class Answer(
     val questionId: Long,
-    val answer: String,
-    val options: Map<String, String>
+    val answer: String
 )
 
 fun main() {
     val rpcMessages = TSGenerator(
         setOf(
-            RequestQuestion::class,
-            Question::class,
+            RequestQuestions::class,
+            QuestionsResponse::class,
             Answer::class
         )
     ).definitionsText
 
-    val template = "// AUTO-GENERATED! Do not edit!\n${rpcMessages}"
+    val template = "// AUTO-GENERATED! Do not edit!\nimport {Action} from \"redux\";\n\n${rpcMessages}"
 
     File("client/src/state/ServerRPC.ts").writeText(template)
     println(rpcMessages)
