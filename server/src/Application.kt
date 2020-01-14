@@ -11,8 +11,6 @@ import io.ktor.auth.*
 import io.ktor.features.*
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
-import io.ktor.http.cio.websocket.CloseReason
-import io.ktor.http.cio.websocket.close
 import io.ktor.http.content.PartData
 import io.ktor.jackson.jackson
 import io.ktor.request.receiveMultipart
@@ -72,6 +70,7 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
         form("formAuth") {
             userParamName = "name"
             passwordParamName = "password"
+            skipWhen { it.sessions.get<UserSession>() != null }
             validate(validator)
         }
     }
@@ -106,15 +105,6 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
             call.respondText(newGroup.toString())
         }
 
-        webSocket("/ws") {
-            val session = call.sessions.get<UserSession>()
-            if (session == null) {
-                close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "No session"))
-            } else {
-                handleConnection(session.user, cm)
-            }
-        }
-
         authenticate("formAuth") {
             post("/login") {
                 val principal = call.principal<UserIdPrincipal>()
@@ -124,6 +114,11 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
                 } else {
                     call.respond(HttpStatusCode.Unauthorized)
                 }
+            }
+
+            webSocket("/ws") {
+                val session = call.sessions.get<UserSession>()
+                handleConnection(session!!.user, cm)
             }
         }
 
