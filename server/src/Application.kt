@@ -1,7 +1,7 @@
 package com.genedata
 
 import com.fasterxml.jackson.databind.SerializationFeature
-import com.genedata.db.Foo
+import com.genedata.db.DB
 import com.genedata.session.USER_SESSION
 import com.genedata.session.UserSession
 import com.genedata.ws.connectionManagerActor
@@ -32,10 +32,10 @@ import kotlin.collections.set
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
-val foo = Foo()
+val db = DB()
 
-val fooValidator: suspend ApplicationCall.(UserPasswordCredential) -> Principal? = {
-    val group = foo.getGroup(it.name)
+val validator: suspend ApplicationCall.(UserPasswordCredential) -> Principal? = {
+    val group = db.getGroup(it.name)
     if (group != null && group.password == it.password)
         UserIdPrincipal(it.name)
     else null
@@ -69,10 +69,10 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
     }
 
     install(Authentication) {
-        form {
+        form("formAuth") {
             userParamName = "name"
-            passwordParamName= "password"
-            validate(fooValidator)
+            passwordParamName = "password"
+            validate(validator)
         }
     }
 
@@ -102,7 +102,7 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
                     }
                 }
             }
-            val newGroup = foo.newGroup(name, pwd)
+            val newGroup = db.newGroup(name, pwd)
             call.respondText(newGroup.toString())
         }
 
@@ -115,16 +115,17 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
             }
         }
 
-        authenticate {
-            post("/login") {
-                val principal = call.principal<UserIdPrincipal>()
-                if (principal != null) {
-                    call.sessions.set(USER_SESSION, UserSession(principal.name))
-                    call.respond(HttpStatusCode.OK, principal.name)
-                } else {
-                    call.respond(HttpStatusCode.Unauthorized)
-                }
+        post("/login") {
+            val principal = call.principal<UserIdPrincipal>()
+            if (principal != null) {
+                call.sessions.set(USER_SESSION, UserSession(principal.name))
+                call.respond(HttpStatusCode.OK, principal.name)
+            } else {
+                call.respond(HttpStatusCode.Unauthorized)
             }
+        }
+
+        authenticate("formAuth") {
         }
 
         get("/json/jackson") {

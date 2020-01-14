@@ -1,0 +1,10 @@
+.Login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.LoginForm {
+    /*width: 450px;*/
+    padding: 15px;
+}

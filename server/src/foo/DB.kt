@@ -27,7 +27,7 @@ object Scores: Table() {
     val score = integer("score")
 }
 
-class Foo {
+class DB {
     init {
         Database.connect("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", driver = "org.h2.Driver")
         transaction {

@@ -2,6 +2,7 @@ package com.genedata.messages
 
 import com.genedata.messages.generator.ReduxAction
 import com.genedata.messages.generator.TSGenerator
+import java.io.File
 
 
 /**
@@ -26,14 +27,16 @@ data class Answer(
 )
 
 fun main() {
-    println(
-        TSGenerator(
-            setOf(
-                RequestQuestion::class,
-                Question::class,
-                Answer::class
-            )
-        ).definitionsText
-    )
+    val rpcMessages = TSGenerator(
+        setOf(
+            RequestQuestion::class,
+            Question::class,
+            Answer::class
+        )
+    ).definitionsText
 
+    val template = "// AUTO-GENERATED! Do not edit!\n${rpcMessages}"
+
+    File("client/src/state/ServerRPC.ts").writeText(template)
+    println(rpcMessages)
 }

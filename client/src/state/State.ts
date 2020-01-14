@@ -6,8 +6,7 @@ export type ApplicationState = {
 }
 
 export const LoginSuccessfulType = 'LoginSuccessful';
-
-interface LoginSuccessful {
+interface LoginSuccessful extends Action<typeof LoginSuccessfulType> {
     type: typeof LoginSuccessfulType;
     id: string;
     name: string;
@@ -15,8 +14,7 @@ interface LoginSuccessful {
 
 type Actions = LoginSuccessful;
 
-type ActionWithId<T = string> = Action<T>;
-type LoginSuccessfulAction = ActionWithId<typeof LoginSuccessfulType>
+type LoginSuccessfulAction = Action<typeof LoginSuccessfulType>
 
 export function loginSuccessfulAction(id: string, name: string): LoginSuccessful {
     return {
@@ -39,6 +37,7 @@ const reducer = (state: ApplicationState = {}, action: Actions) => {
 };
 
 // -------------------- Store Enhancers --------------------
+
 const __DEV__ = true;       // todo
 const enhancers = [applyMiddleware()];
 if (__DEV__) {

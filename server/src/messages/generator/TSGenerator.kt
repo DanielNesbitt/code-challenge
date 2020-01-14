@@ -79,7 +79,7 @@ class TSGenerator(klasses: Iterable<KClass<*>>) {
         val lines = mutableListOf<String>()
 
         if (isReduxAction) {
-            lines.add("export const ${klass.simpleName}Type = '${klass.simpleName}'")
+            lines.add("export const ${klass.simpleName}Type = '${klass.simpleName}';")
             properties.add(Pair("type", "typeof ${klass.simpleName}Type"))
         }
         lines.add("interface ${klass.simpleName}$extends {")
