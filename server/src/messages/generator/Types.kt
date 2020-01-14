@@ -23,11 +23,11 @@ class TypeConverter {
 
     private val mappings = mutableMapOf<KType, TsType>()
 
-    fun convert(kType: KType): TsType {
-        return mappings.getOrPut(kType, { generateType(kType) })
+    fun convert(kType: KType, visitor: (KClass<*>) -> Unit): TsType {
+        return mappings.getOrPut(kType, { generateType(kType, visitor) })
     }
 
-    private fun generateType(kType: KType): TsType {
+    private fun generateType(kType: KType, visitor: (KClass<*>) -> Unit): TsType {
         val nullable = kType.isMarkedNullable
         return when (val classifier = kType.classifier) {
             String::class, Char::class -> BasicType("string", nullable)
@@ -38,20 +38,29 @@ class TypeConverter {
             is KClass<*> -> {
                 return if (classifier.isSubclassOf(Iterable::class) || classifier.javaObjectType.isArray) {
                     val arrayType = kType.arguments.single().type ?: NullableAny
-                    ArrayType(generateType(arrayType), nullable)
+                    visitGenericParam(arrayType, visitor)
+                    ArrayType(generateType(arrayType, visitor), nullable)
                 } else if (classifier.isSubclassOf(Map::class)) {
                     val keyType = kType.arguments[0].type
                     if (keyType?.classifier!! != String::class) {
                         throw RuntimeException("Only maps with String keys are supported.")
                     }
                     val valueType = kType.arguments[1].type ?: NullableAny
-                    MapType(convert(keyType), convert(valueType), nullable)
+                    visitGenericParam(valueType, visitor)
+                    MapType(convert(keyType, visitor), convert(valueType, visitor), nullable)
                 } else {
                     ClassType(classifier.simpleName!!, nullable)
                 }
             }
             is KTypeParameter -> BasicType(classifier.name, nullable)
             else -> throw RuntimeException("Could not match type.")
+        }
+    }
+
+    private fun visitGenericParam(genericType: KType, visitor: (KClass<*>) -> Unit) {
+        val genericClassifier = genericType.classifier
+        if (genericClassifier is KClass<*>) {
+            visitor(genericClassifier)
         }
     }
 

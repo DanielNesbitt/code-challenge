@@ -44,7 +44,7 @@ class TSGenerator(klasses: Iterable<KClass<*>>) {
     }
 
     private fun convert(kType: KType): TsType {
-        val convertedType = typeConverter.convert(kType)
+        val convertedType = typeConverter.convert(kType, this::visitClass)
         val classifier = kType.classifier
         if (classifier is KClass<*> && convertedType.classType) {
             visitClass(classifier)
