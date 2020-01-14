@@ -33,7 +33,8 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 val db = DB()
 
 val validator: suspend ApplicationCall.(UserPasswordCredential) -> Principal? = {
-    if (it.name == it.password)
+    val group = db.getGroup(it.name)
+    if (group != null && group.password == it.password)
         UserIdPrincipal(it.name)
     else null
 }
