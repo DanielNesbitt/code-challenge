@@ -30,7 +30,7 @@ type Actions = LoginSuccessful;
 export const userSelector = (state: ApplicationState): (string | undefined) => state[NAME].user;
 export type LoginState = Record<typeof NAME, State>;
 
-export const module: ReduxModule<State, Actions> = {
+export const LoginModule: ReduxModule<State, Actions> = {
     name: NAME,
     reducer: (state: State = {}, action: Actions) => {
         switch (action.type) {

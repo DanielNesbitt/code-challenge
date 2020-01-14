@@ -1,6 +1,6 @@
 import {applyMiddleware, combineReducers, compose, createStore} from 'redux'
 import {TypedUseSelectorHook, useSelector} from "react-redux";
-import {LoginState, module as LoginModule} from "../routes/Login/LoginModule";
+import {LoginState, LoginModule} from "../routes/Login/LoginModule";
 
 export type ApplicationState = LoginState;
 
