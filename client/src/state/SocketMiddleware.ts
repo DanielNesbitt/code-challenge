@@ -11,8 +11,9 @@ const createSocket = (): WebSocket => {
 
 export const socketMiddleware: Middleware = (api: MiddlewareAPI<Dispatch, ApplicationState>) => (next: Dispatch<Action>) => {
     let socket: WebSocket | undefined;
+    let user: string | null = null;
     return (action: AnyAction) => {
-        if (action.type === LoginSuccessfulType) {
+        if (action.type === LoginSuccessfulType && user !== action.user) {
             if (socket) {
                 socket?.close();
             }
@@ -28,6 +29,8 @@ export const socketMiddleware: Middleware = (api: MiddlewareAPI<Dispatch, Applic
                 }
             };
             socket.onerror = e => console.log('errored', e);
+
+            user = action.user;
         }
         if (action.meta?.socket) {
             socket?.send(JSON.stringify(action));
