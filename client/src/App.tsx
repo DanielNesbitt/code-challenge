@@ -5,9 +5,9 @@ import {createBrowserHistory} from 'history';
 import {Home} from "./routes/Home/Home";
 import {Question} from "./routes/Question";
 import {Provider} from "react-redux";
-import {store, useTypedSelector} from "./state/State";
 import {Login} from "./routes/Login/Login";
 import {userSelector} from "./routes/Login/LoginModule";
+import {store, useTypedSelector} from "./state/Store";
 
 const history = createBrowserHistory();
 

@@ -8,7 +8,7 @@ export type State = {
     user?: string;
 }
 
-const LoginSuccessfulType = 'LoginSuccessful';
+export const LoginSuccessfulType = 'LoginSuccessful';
 interface LoginSuccessful extends Action<typeof LoginSuccessfulType> {
     type: typeof LoginSuccessfulType;
     id: string;

@@ -41,7 +41,6 @@ fun CoroutineScope.connectionManagerActor() = actor<ConnectionManagerMsg> {
 
     suspend fun handleConnect(msg: Connect) {
         connections[msg.user] = msg.ws
-        msg.response.complete(Connected(msg.ws.outgoing))
 
         // TODO Bullshit stuff
         val questions = mutableListOf<QuestionEntry>()
@@ -55,6 +54,7 @@ fun CoroutineScope.connectionManagerActor() = actor<ConnectionManagerMsg> {
         }
         msg.ws.send(jsonContent)
         // TODO End bullshit
+        msg.response.complete(Connected(msg.ws.outgoing))
     }
 
     for (msg in channel) {
@@ -72,8 +72,11 @@ suspend fun DefaultWebSocketServerSession.handleConnection(user: String, cm: Sen
             close(CloseReason(4001, "User already connected."))
         }
         is Connected -> {
-            for (frame in incoming) {
-                result.input.send(frame)
+            while (true) {
+                for (frame in incoming) {
+                    outgoing.send(Frame.Text("get fucked"))
+                    result.input.send(frame)
+                }
             }
         }
     }

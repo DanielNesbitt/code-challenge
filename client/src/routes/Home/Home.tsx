@@ -1,8 +1,8 @@
 import React from "react";
 import {DetailsList, IColumn} from "office-ui-fabric-react";
-import {useTypedSelector} from "../../state/State";
 import {questionsSelector} from "./HomeModule";
 import {QuestionEntry} from "../../state/ServerRPC";
+import {useTypedSelector} from "../../state/Store";
 
 const columns: IColumn[] = [
     {
