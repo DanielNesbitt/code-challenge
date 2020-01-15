@@ -1,8 +1,9 @@
 import {applyMiddleware, combineReducers, compose, createStore} from 'redux'
 import {TypedUseSelectorHook, useSelector} from "react-redux";
-import {LoginState, LoginModule} from "../routes/Login/LoginModule";
+import {LoginModule, LoginState} from "../routes/Login/LoginModule";
+import {HomeModule, HomeState} from "../routes/Home/HomeModule";
 
-export type ApplicationState = LoginState;
+export type ApplicationState = LoginState & HomeState;
 
 // -------------------- Store Enhancers --------------------
 
@@ -21,7 +22,10 @@ if (__DEV__) {
 
 // -------------------- Store --------------------
 
-export const store = createStore(combineReducers({[LoginModule.name]: LoginModule.reducer}), {}, compose(...enhancers),);
+export const store = createStore(combineReducers({
+    [LoginModule.name]: LoginModule.reducer,
+    [HomeModule.name]: HomeModule.reducer,
+}), {}, compose(...enhancers),);
 
 // -------------------- Selectors --------------------
 

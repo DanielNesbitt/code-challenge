@@ -8,6 +8,8 @@ export type State = {
     questions?: QuestionEntry[];
 }
 
+export const questionsSelector = (state: ApplicationState): (QuestionEntry[] | undefined) => state[NAME].questions;
+
 type Actions = QuestionsResponse;
 
 export type HomeState = Record<typeof NAME, State>;

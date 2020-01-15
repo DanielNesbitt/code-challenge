@@ -20,14 +20,16 @@ export const Login: React.FC = () => {
 
     const dispatch = useDispatch();
 
-    function dispatchLogin (response: AxiosResponse) {
+    const dispatchLogin = (response: AxiosResponse) => {
         dispatch(loginSuccessfulAction(response.data, response.data))
-    }
-    function showMessage (response: AxiosResponse) {
+    };
+
+    const showMessage = (response: AxiosResponse) => {
         setErrorMsg(response.data);
-    }
+    };
+
     const doLoginAction = (url: string, onComplete: Function) => {
-        return async() => {
+        return async () => {
             setBusy(true);
             setErrorMsg("");
             try {
@@ -52,7 +54,6 @@ export const Login: React.FC = () => {
 
     const submitAction = doLoginAction("/api/login", dispatchLogin);
     const createAction = doLoginAction("/api/newGroup", showMessage);
-
 
     const tokens: IStackTokens = {
         childrenGap: 10,
