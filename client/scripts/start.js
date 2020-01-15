@@ -100,9 +100,10 @@ checkBrowsers(paths.appPath, isInteractive)
         // Load proxy config
         const proxyConfig = {
             '/api/ws': {
-                target: 'http://localhost:8080',
+                target: 'ws://localhost:8080',
                 pathRewrite: {'^/api': ''},
                 ws: true,
+                changeOrigin: true,
             },
             '/api': {
                 target: 'http://localhost:8080',
