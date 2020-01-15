@@ -1,12 +1,12 @@
 package com.genedata.ws
 
+import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.genedata.messages.QuestionEntry
 import com.genedata.messages.QuestionsResponse
 import io.ktor.http.cio.websocket.CloseReason
 import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.close
-import io.ktor.http.cio.websocket.send
 import io.ktor.websocket.DefaultWebSocketServerSession
 import io.ktor.websocket.WebSocketServerSession
 import kotlinx.coroutines.CompletableDeferred
@@ -50,9 +50,11 @@ fun CoroutineScope.connectionManagerActor() = actor<ConnectionManagerMsg> {
         questions.add(QuestionEntry(3, "The fourth title."))
         val response = QuestionsResponse(questions)
         val jsonContent = withContext(Dispatchers.IO) {
-            jacksonObjectMapper().writeValueAsBytes(response)
+            val json = jacksonObjectMapper().valueToTree<ObjectNode>(response)
+            json.put("type", response.javaClass.simpleName)
+            json.toString()
         }
-        msg.ws.send(jsonContent)
+        msg.ws.send(Frame.Text(jsonContent))
         // TODO End bullshit
         msg.response.complete(Connected(msg.ws.outgoing))
     }

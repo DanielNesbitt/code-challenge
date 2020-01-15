@@ -6,7 +6,10 @@ import com.genedata.session.USER_SESSION
 import com.genedata.session.UserSession
 import com.genedata.ws.connectionManagerActor
 import com.genedata.ws.handleConnection
-import io.ktor.application.*
+import io.ktor.application.Application
+import io.ktor.application.ApplicationCall
+import io.ktor.application.call
+import io.ktor.application.install
 import io.ktor.auth.*
 import io.ktor.features.*
 import io.ktor.http.ContentType
@@ -89,7 +92,6 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
     }
 
     routing {
-        trace { application.log.trace(it.buildText()) }
         get("/") {
             call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
         }
@@ -114,6 +116,11 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
             } catch (th: Throwable) {
                 call.respond(HttpStatusCode.BadRequest, th.message ?: "")
             }
+        }
+
+        get("/user") {
+            val session = call.sessions.get<UserSession>()
+            call.respond(HttpStatusCode.OK, session?.user.orEmpty())
         }
 
         authenticate("formAuth") {
