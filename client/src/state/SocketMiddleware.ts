@@ -13,15 +13,21 @@ export const socketMiddleware: Middleware = (api: MiddlewareAPI<Dispatch, Applic
     let socket: WebSocket | undefined;
     return (action: AnyAction) => {
         if (action.type === LoginSuccessfulType) {
-            if (!!socket) {
+            if (socket) {
                 socket?.close();
             }
 
             socket = createSocket();
+            socket.onopen = ev => {
+                console.log('WS Ready')
+            };
             socket.onmessage = ev => {
                 const action = JSON.parse(ev.data);
-                api.dispatch(action);
+                if (action.type) {
+                    api.dispatch(action);
+                }
             };
+            socket.onerror = e => console.log('errored', e);
         }
         if (action.meta?.socket) {
             socket?.send(JSON.stringify(action));
