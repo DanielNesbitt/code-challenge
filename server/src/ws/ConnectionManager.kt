@@ -72,11 +72,9 @@ suspend fun DefaultWebSocketServerSession.handleConnection(user: String, cm: Sen
             close(CloseReason(4001, "User already connected."))
         }
         is Connected -> {
-            while (true) {
-                for (frame in incoming) {
-                    outgoing.send(Frame.Text("get fucked"))
-                    result.input.send(frame)
-                }
+            for (frame in incoming) {
+                outgoing.send(Frame.Text("get fucked"))
+                result.input.send(frame)
             }
         }
     }
