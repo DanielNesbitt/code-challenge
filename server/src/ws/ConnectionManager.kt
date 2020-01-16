@@ -40,23 +40,27 @@ fun CoroutineScope.connectionManagerActor() = actor<ConnectionManagerMsg> {
     val connections = mutableMapOf<String, WebSocketServerSession>()
 
     suspend fun handleConnect(msg: Connect) {
-        connections[msg.user] = msg.ws
+        if (connections.containsKey(msg.user)) {
+            msg.response.complete(UserAlreadyConnected)
+        } else {
+            connections[msg.user] = msg.ws
 
-        // TODO Bullshit stuff
-        val questions = mutableListOf<QuestionEntry>()
-        questions.add(QuestionEntry(0, "The first title."))
-        questions.add(QuestionEntry(1, "The second title."))
-        questions.add(QuestionEntry(2, "The third title."))
-        questions.add(QuestionEntry(3, "The fourth title."))
-        val response = QuestionsResponse(questions)
-        val jsonContent = withContext(Dispatchers.IO) {
-            val json = jacksonObjectMapper().valueToTree<ObjectNode>(response)
-            json.put("type", response.javaClass.simpleName)
-            json.toString()
+            // TODO Bullshit stuff
+            val questions = mutableListOf<QuestionEntry>()
+            questions.add(QuestionEntry(0, "The first title."))
+            questions.add(QuestionEntry(1, "The second title."))
+            questions.add(QuestionEntry(2, "The third title."))
+            questions.add(QuestionEntry(3, "The fourth title."))
+            val response = QuestionsResponse(questions)
+            val jsonContent = withContext(Dispatchers.IO) {
+                val json = jacksonObjectMapper().valueToTree<ObjectNode>(response)
+                json.put("type", response.javaClass.simpleName)
+                json.toString()
+            }
+            msg.ws.send(Frame.Text(jsonContent))
+            // TODO End bullshit
+            msg.response.complete(Connected(msg.ws.outgoing))
         }
-        msg.ws.send(Frame.Text(jsonContent))
-        // TODO End bullshit
-        msg.response.complete(Connected(msg.ws.outgoing))
     }
 
     for (msg in channel) {
@@ -75,7 +79,6 @@ suspend fun DefaultWebSocketServerSession.handleConnection(user: String, cm: Sen
         }
         is Connected -> {
             for (frame in incoming) {
-                outgoing.send(Frame.Text("get fucked"))
                 result.input.send(frame)
             }
         }
