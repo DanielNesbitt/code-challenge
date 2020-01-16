@@ -6,8 +6,8 @@ import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.KVisibility
+import kotlin.reflect.full.createType
 import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.jvm.javaType
 
 /**
@@ -18,6 +18,7 @@ class TSGenerator(klasses: Iterable<KClass<*>>) {
     private val typeConverter = TypeConverter()
     private val visitedClasses = mutableSetOf<KClass<*>>()
     private val definitions = mutableListOf<String>()
+    private val ActionType = ReduxAction::class.createType()
 
     private val ignoredSuperclasses = setOf(
         Any::class,
@@ -61,9 +62,11 @@ class TSGenerator(klasses: Iterable<KClass<*>>) {
     }
 
     private fun generateInterface(klass: KClass<*>): String {
-        val superTypes = klass.supertypes.filterNot { it.classifier in ignoredSuperclasses }
+        val superTypes = klass.supertypes.filterNot { it.classifier in ignoredSuperclasses }.toMutableList()
+        val isReduxAction = superTypes.remove(ActionType)
         var extends = if (superTypes.isNotEmpty()) " extends " else "" +
             superTypes.joinToString(separator = " & ") { convert(it).typeName }
+
 
         val properties = klass.declaredMemberProperties
             .filter { !isFunctionType(it.returnType.javaType) }
@@ -73,8 +76,6 @@ class TSGenerator(klasses: Iterable<KClass<*>>) {
                 val propertyName = property.name + if (propertyType.optional) "?" else ""
                 Pair(propertyName, propertyType.typeName)
             }.toMutableList()
-
-        val isReduxAction = klass.findAnnotation<ReduxAction>() != null
 
         val lines = mutableListOf<String>()
 

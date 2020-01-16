@@ -1,7 +1,5 @@
 package com.genedata.messages
 
-import com.fasterxml.jackson.databind.node.ObjectNode
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.genedata.messages.generator.ReduxAction
 import com.genedata.messages.generator.TSGenerator
 import java.io.File
@@ -10,32 +8,25 @@ import java.io.File
 /**
  * @author Daniel Nesbitt
  */
-@ReduxAction
 data class RequestQuestions(
     val questionId: Long
-)
+) : ReduxAction
 
 data class QuestionEntry(
     val questionId: Long,
     val questionTitle: String
 )
 
-@ReduxAction
 data class QuestionsResponse(
     val questions: List<QuestionEntry>
-)
+) : ReduxAction
 
-@ReduxAction
 data class Answer(
     val questionId: Long,
     val answer: String
-)
+) : ReduxAction
 
 fun main() {
-    val value = jacksonObjectMapper().valueToTree<ObjectNode>(RequestQuestions(1))
-    println(value.toString())
-
-
     val rpcMessages = TSGenerator(
         setOf(
             RequestQuestions::class,
