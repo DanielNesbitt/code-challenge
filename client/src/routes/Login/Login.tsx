@@ -3,6 +3,7 @@ import axios, {AxiosResponse} from "axios";
 import {
     DefaultButton,
     IStackTokens,
+    Label,
     PrimaryButton,
     Spinner,
     SpinnerSize,
@@ -17,6 +18,7 @@ export const Login: React.FC = () => {
     const [password, setPassword] = useState<string>("");
     const [busy, setBusy] = useState<boolean>(false);
     const [errorMsg, setErrorMsg] = useState<string>("");
+    const [createdMsg, setCreatedMsg] = useState<string> ("");
 
     const dispatch = useDispatch();
 
@@ -25,13 +27,14 @@ export const Login: React.FC = () => {
     };
 
     const showMessage = (response: AxiosResponse) => {
-        setErrorMsg(response.data);
+        setCreatedMsg(response.data);
     };
 
     const doLoginAction = (url: string, onComplete: Function) => {
         return async () => {
             setBusy(true);
             setErrorMsg("");
+            setCreatedMsg("");
             try {
                 // Perform the fetch
                 const bodyFormData = new FormData();
@@ -47,7 +50,11 @@ export const Login: React.FC = () => {
                 onComplete(response);
             } catch (e) {
                 setBusy(false);
-                setErrorMsg(e.response.data);
+                if (e.response.status == 401) {
+                    setErrorMsg("Invalid credentials.")
+                } else {
+                    setErrorMsg(e.response.data);
+                }
             }
         };
     };
@@ -72,6 +79,7 @@ export const Login: React.FC = () => {
                 <DefaultButton text ="Create User" disabled={busy} onClick={createAction}/>
                 {busy ? <Spinner size={SpinnerSize.medium}/> : null}
             </Stack>
+            {createdMsg ? <Label>{createdMsg}</Label> : null}
         </Stack>
     </Stack>;
 };

@@ -129,8 +129,6 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
                 if (principal != null) {
                     call.sessions.set(USER_SESSION, UserSession(principal.name))
                     call.respond(HttpStatusCode.OK, principal.name)
-                } else {
-                    call.respond(HttpStatusCode.Unauthorized, "Invalid credentials")
                 }
             }
 
