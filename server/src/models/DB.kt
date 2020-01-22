@@ -10,7 +10,7 @@ import org.mindrot.jbcrypt.BCrypt
  */
 
 object Groups : Table() {
-    val id = integer("id").autoIncrement().primaryKey()
+    val id = integer("group_id").autoIncrement().primaryKey().uniqueIndex()
     val name = varchar("name", 50)
     val passwordHash = varchar("passwordHash", 120)
 }
@@ -22,13 +22,13 @@ data class Group(val id: Int, val name: String, val passwordHash: String) {
 }
 
 object Questions: Table() {
-    val id = uuid("id")
+    val id = integer("question_id").autoIncrement().primaryKey().uniqueIndex()
     val text = varchar("text", 500)
 }
 
 object Scores: Table() {
-    val group = uuid("groupId")
-    val problem = uuid("problemId")
+    val group = integer("group_id").uniqueIndex()
+    val question = integer("question_id").uniqueIndex()
     val score = integer("score")
 }
 
@@ -39,6 +39,8 @@ class DB {
             SchemaUtils.create(Groups, Questions, Scores)
         }
     }
+
+    // Groups
 
     fun newGroup(newGroupName: String, newGroupPwd: String): String {
         return transaction {
@@ -64,4 +66,23 @@ class DB {
             }.firstOrNull()
         }
     }
+
+    // Questions
+
+    fun getQuestion(group: String): String? {
+        return transaction {
+            val lastQuestion = (Groups innerJoin Scores)
+                .slice(Groups.name, Scores.question)
+                .select { Groups.name eq group}
+                .map {it[Scores.question]}
+                .max()
+
+            val next = lastQuestion?.let{ it + 1 } ?: 0
+            Questions.select { Questions.id eq next }
+                .map { it[Questions.text] }
+                .firstOrNull()
+        }
+    }
+
+
 }
