@@ -5,8 +5,8 @@ import com.genedata.models.DB
 import com.genedata.session.USER_SESSION
 import com.genedata.session.UserSession
 import com.genedata.session.createValidator
+import com.genedata.ws.connect
 import com.genedata.ws.connectionManagerActor
-import com.genedata.ws.handleConnection
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
@@ -128,7 +128,7 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
 
             webSocket("/ws") {
                 val session = call.sessions.get<UserSession>()
-                handleConnection(session!!.user, cm)
+                connect(session!!.user, cm)
             }
         }
 
