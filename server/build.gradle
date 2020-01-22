@@ -36,6 +36,7 @@ dependencies {
     compile "io.ktor:ktor-auth:$ktor_version"
     compile "io.ktor:ktor-jackson:$ktor_version"
     testCompile "io.ktor:ktor-server-tests:$ktor_version"
-    compile 'org.jetbrains.exposed:exposed:0.17.7'
+    compile "org.jetbrains.exposed:exposed:0.17.7"
     compile "com.h2database:h2:1.4.199"
+    compile "org.mindrot:jbcrypt:0.4"
 }

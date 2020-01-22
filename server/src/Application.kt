@@ -4,10 +4,10 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.genedata.db.DB
 import com.genedata.session.USER_SESSION
 import com.genedata.session.UserSession
+import com.genedata.session.createValidator
 import com.genedata.ws.connectionManagerActor
 import com.genedata.ws.handleConnection
 import io.ktor.application.Application
-import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.auth.*
@@ -35,13 +35,6 @@ fun main(args: Array<String>) {
     db.newGroup("daniel", "daniel")
     db.newGroup("alice", "alice")
     io.ktor.server.netty.EngineMain.main(args)
-}
-
-val validator: suspend ApplicationCall.(UserPasswordCredential) -> Principal? = {
-    val group = db.getGroup(it.name)
-    if (group != null && group.password == it.password)
-        UserIdPrincipal(it.name)
-    else null
 }
 
 @Suppress("unused") // Referenced in application.conf
@@ -81,7 +74,7 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
             userParamName = "name"
             passwordParamName = "password"
             skipWhen { it.sessions.get<UserSession>() != null }
-            validate(validator)
+            validate(createValidator(db))
         }
     }
 

@@ -1,7 +1,9 @@
 package com.genedata.db
 
+import com.genedata.session.hashPassword
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.mindrot.jbcrypt.BCrypt
 
 /**
  * @author Alice Li
@@ -10,10 +12,14 @@ import org.jetbrains.exposed.sql.transactions.transaction
 object Groups : Table() {
     val id = integer("id").autoIncrement().primaryKey()
     val name = varchar("name", 50)
-    val password = varchar("password", 50)
+    val passwordHash = varchar("passwordHash", 120)
 }
 
-data class Group(val id: Int, val name: String, val password: String)
+data class Group(val id: Int, val name: String, val passwordHash: String) {
+    fun validatePassword(password: String): Boolean {
+        return BCrypt.checkpw(password, passwordHash)
+    }
+}
 
 object Questions: Table() {
     val id = uuid("id")
@@ -39,9 +45,10 @@ class DB {
             if (Groups.slice(Groups.name).selectAll().map{ it[Groups.name] }.toSet().contains(newGroupName)) {
                 throw RuntimeException("Group name ${newGroupName} already in use.")
             }
+            val pass = hashPassword(newGroupPwd)
             Groups.insert {
                 it[name] = newGroupName
-                it[password] = newGroupPwd
+                it[passwordHash] = pass
             } get Groups.name
         }
     }
@@ -52,7 +59,7 @@ class DB {
                 Group(
                     id = it[Groups.id],
                     name = it[Groups.name],
-                    password = it[Groups.password]
+                    passwordHash = it[Groups.passwordHash]
                 )
             }.firstOrNull()
         }
