@@ -21,11 +21,6 @@ data class Group(val id: Int, val name: String, val passwordHash: String) {
     }
 }
 
-object Questions: Table() {
-    val id = integer("question_id").autoIncrement().primaryKey().uniqueIndex()
-    val text = varchar("text", 500)
-}
-
 object Scores: Table() {
     val group = integer("group_id").uniqueIndex()
     val question = integer("question_id").uniqueIndex()
@@ -36,7 +31,7 @@ class DB {
     init {
         Database.connect("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", driver = "org.h2.Driver")
         transaction {
-            SchemaUtils.create(Groups, Questions, Scores)
+            SchemaUtils.create(Groups, Questions, QuestionsAndAnswers, Scores)
         }
     }
 
@@ -66,23 +61,5 @@ class DB {
             }.firstOrNull()
         }
     }
-
-    // Questions
-
-    fun getQuestion(group: String): String? {
-        return transaction {
-            val lastQuestion = (Groups innerJoin Scores)
-                .slice(Groups.name, Scores.question)
-                .select { Groups.name eq group}
-                .map {it[Scores.question]}
-                .max()
-
-            val next = lastQuestion?.let{ it + 1 } ?: 0
-            Questions.select { Questions.id eq next }
-                .map { it[Questions.text] }
-                .firstOrNull()
-        }
-    }
-
 
 }
