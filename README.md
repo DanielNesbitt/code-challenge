@@ -7,16 +7,21 @@ Reading code is harder than writing it. The real world does not always have fami
 - Field for expected result
 
 ### Examples
-- 10 questions
+- 10- questions
     - Languages mostly Java, Javascript, SQL, Python
     - Stretch challenges: Perl, Lisp, Haskell, Assembly?, GO?, Erlang/Elixir?, C?
     - Mix of difficulty
 
 ### TODO:
- - Web App (ktor)
-    - Create app with login
+ - Web App (ktor & react typescript)
+    - ~~Create app with login~~
     - Create page for displaying code/input parameters and accepting answers
-    - Security prevent users from cheating (logging in as other groups, opening multiple windows/tabs, copy from page)
+    - Server backend for storing and serving questions
+    - Server backend for accepting and scoring answers
+    - Security prevent users from cheating
+        - ~~logging in as other groups~~
+        - ~~opening multiple windows/tabs~~
+        - copy from page
  - Scoring Scheme
     - Penalties for wrong answers
     - Weighted for difficulty (automatically)
