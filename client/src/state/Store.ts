@@ -4,6 +4,7 @@ import {LoginModule} from "../routes/Login/LoginModule";
 import {HomeModule} from "../routes/Home/HomeModule";
 import {ApplicationState} from "./State";
 import {socketMiddleware} from "./SocketMiddleware";
+import {QuestionModule} from "../routes/Question/QuestionModule";
 
 // -------------------- Store Enhancers --------------------
 
@@ -25,6 +26,7 @@ if (__DEV__) {
 export const store = createStore(combineReducers({
     [LoginModule.name]: LoginModule.reducer,
     [HomeModule.name]: HomeModule.reducer,
+    [QuestionModule.name]: QuestionModule.reducer
 }), {}, compose(...enhancers),);
 
 // -------------------- Selectors --------------------

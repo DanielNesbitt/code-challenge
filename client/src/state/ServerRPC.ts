@@ -24,3 +24,12 @@ export interface Answer extends Action<typeof AnswerType> {
     questionId: number;
     type: typeof AnswerType;
 }
+
+export const QuestionType = 'Question';
+export interface Question extends Action<typeof QuestionType> {
+    code: string;
+    input: string;
+    questionId: number;
+    title: string;
+    type: typeof QuestionType;
+}

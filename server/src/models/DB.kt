@@ -1,4 +1,4 @@
-package com.genedata.db
+package com.genedata.models
 
 import com.genedata.session.hashPassword
 import org.jetbrains.exposed.sql.*

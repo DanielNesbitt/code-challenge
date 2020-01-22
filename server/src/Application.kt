@@ -1,7 +1,7 @@
 package com.genedata
 
 import com.fasterxml.jackson.databind.SerializationFeature
-import com.genedata.db.DB
+import com.genedata.models.DB
 import com.genedata.session.USER_SESSION
 import com.genedata.session.UserSession
 import com.genedata.session.createValidator
@@ -95,6 +95,7 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
             var pwd = ""
             while (true) {
                 val part = multipart.readPart() ?: break
+                // TODO Ensure that empty user name and password do not work
                 if (part is PartData.FormItem) {
                     if (part.name == "name") {
                         name = part.value

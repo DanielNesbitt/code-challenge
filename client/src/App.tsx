@@ -3,7 +3,7 @@ import "./App.css";
 import {Route, Router, Switch} from "react-router";
 import {createBrowserHistory} from "history";
 import {Home} from "./routes/Home/Home";
-import {Question} from "./routes/Question";
+import {Question} from "./routes/Question/Question";
 import {Provider, useDispatch} from "react-redux";
 import {Login} from "./routes/Login/Login";
 import {loginSuccessfulAction, userSelector} from "./routes/Login/LoginModule";

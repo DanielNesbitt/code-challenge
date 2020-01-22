@@ -1,6 +1,6 @@
 package com.genedata.session
 
-import com.genedata.db.DB
+import com.genedata.models.DB
 import io.ktor.application.ApplicationCall
 import io.ktor.auth.Principal
 import io.ktor.auth.UserIdPrincipal
