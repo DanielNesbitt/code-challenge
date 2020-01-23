@@ -1,6 +1,7 @@
 package com.genedata.messages
 
 import com.genedata.messages.generator.ReduxAction
+import com.genedata.messages.generator.SocketAction
 import com.genedata.messages.generator.TSGenerator
 import java.io.File
 
@@ -31,7 +32,7 @@ data class Question(
 data class Answer(
     val questionId: Long,
     val answer: String
-) : ReduxAction
+) : SocketAction
 
 fun main() {
     val rpcMessages = TSGenerator(

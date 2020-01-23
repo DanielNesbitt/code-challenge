@@ -19,6 +19,7 @@ class TSGenerator(klasses: Iterable<KClass<*>>) {
     private val visitedClasses = mutableSetOf<KClass<*>>()
     private val definitions = mutableListOf<String>()
     private val ActionType = ReduxAction::class.createType()
+    private val SocketActionType = SocketAction::class.createType()
 
     private val ignoredSuperclasses = setOf(
         Any::class,
@@ -63,7 +64,8 @@ class TSGenerator(klasses: Iterable<KClass<*>>) {
 
     private fun generateInterface(klass: KClass<*>): String {
         val superTypes = klass.supertypes.filterNot { it.classifier in ignoredSuperclasses }.toMutableList()
-        val isReduxAction = superTypes.remove(ActionType)
+        val isSocketAction = superTypes.remove(SocketActionType)
+        val isReduxAction = isSocketAction || superTypes.remove(ActionType)
         var extends = if (superTypes.isNotEmpty()) " extends " else "" +
             superTypes.joinToString(separator = " & ") { convert(it).typeName }
 
@@ -79,14 +81,27 @@ class TSGenerator(klasses: Iterable<KClass<*>>) {
 
         val lines = mutableListOf<String>()
 
+        val name = klass.simpleName
         if (isReduxAction) {
-            extends = extends + " extends Action<typeof ${klass.simpleName}Type>"
-            lines.add("export const ${klass.simpleName}Type = '${klass.simpleName}';")
-            properties.add(Pair("type", "typeof ${klass.simpleName}Type"))
+            extends += " extends Action<typeof ${name}Type>"
+            lines.add("export const ${name}Type = '$name';")
+            lines.add("type ${name}ReduxAction = Action<typeof ${name}Type>;")
+            properties.add(Pair("type", "typeof ${name}Type"))
         }
-        lines.add("export interface ${klass.simpleName}$extends {")
+        lines.add("export interface $name$extends {")
         lines.addAll(properties.map { pair -> "    ${pair.first}: ${pair.second};" })
         lines.add("}")
+        if (isReduxAction) {
+            lines.add("export type ${name}Action = ${name} & ${name}ReduxAction;")
+        }
+        if (isSocketAction) {
+            lines.add("export function create${name}Action(arg: ${name}): ${name}Action {")
+            lines.add("    return {")
+            lines.add("        ...arg,")
+            lines.add("        type: ${name}Type,")
+            lines.add("    }")
+            lines.add("}")
+        }
 
         return lines.joinToString(separator = "\n")
     }
