@@ -32,8 +32,8 @@ import kotlin.collections.set
 val db = DB()
 
 fun main(args: Array<String>) {
-    db.newGroup("daniel", "daniel")
-    db.newGroup("alice", "alice")
+    db.newUser("daniel", "daniel")
+    db.newUser("alice", "alice")
     io.ktor.server.netty.EngineMain.main(args)
 }
 
@@ -89,7 +89,7 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
             call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
         }
 
-        post("/newGroup") {
+        post("/newUser") {
             val multipart = call.receiveMultipart()
             var name = ""
             var pwd = ""
@@ -105,8 +105,8 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
                 }
             }
             try {
-                val newGroup = db.newGroup(name, pwd)
-                call.respondText("Group ${newGroup} created.")
+                val newUser = db.newUser(name, pwd)
+                call.respondText("User ${newUser} created.")
             } catch (th: Throwable) {
                 call.respond(HttpStatusCode.BadRequest, th.message ?: "")
             }

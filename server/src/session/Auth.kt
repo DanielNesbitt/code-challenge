@@ -14,8 +14,8 @@ val NUM_ROUNDS = 8
 
 fun createValidator(db: DB): suspend ApplicationCall.(UserPasswordCredential) -> Principal? {
     return {
-        val group = db.getGroup(it.name)
-        if (group != null && group.validatePassword(it.password))
+        val user = db.getUser(it.name)
+        if (user != null && user.validatePassword(it.password))
             UserIdPrincipal(it.name)
         else null
     }

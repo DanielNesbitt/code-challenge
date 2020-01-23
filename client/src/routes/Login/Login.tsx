@@ -61,7 +61,7 @@ export const Login: React.FC = () => {
 
 
     const submitAction = doLoginAction("/api/login", dispatchLogin);
-    const createAction = doLoginAction("/api/newGroup", showMessage);
+    const createAction = doLoginAction("/api/newUser", showMessage);
 
     const tokens: IStackTokens = {
         childrenGap: 10,
