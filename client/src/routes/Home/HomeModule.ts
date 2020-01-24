@@ -1,6 +1,6 @@
 import {ReduxModule} from "../../state/Module";
 import {ApplicationState} from "../../state/State";
-import {QuestionEntry, QuestionsResponse, QuestionsResponseType} from "../../state/ServerRPC";
+import {QuestionEntry, QuestionsResponseAction, QuestionsResponseType} from "../../state/ServerRPC";
 
 const NAME = 'Home';
 
@@ -10,7 +10,7 @@ export type State = {
 
 export const questionsSelector = (state: ApplicationState): (QuestionEntry[] | undefined) => state[NAME].questions;
 
-type Actions = QuestionsResponse;
+type Actions = QuestionsResponseAction;
 
 export type HomeState = Record<typeof NAME, State>;
 

@@ -25,8 +25,7 @@ data class QuestionsResponse(
 data class Question(
     val questionId: Long,
     val title: String,
-    val code: String,
-    val input: String
+    val text: String
 ) : ReduxAction
 
 data class Answer(
@@ -39,8 +38,8 @@ fun main() {
         setOf(
             RequestQuestions::class,
             QuestionsResponse::class,
-            Answer::class,
-            Question::class
+            Question::class,
+            Answer::class
         )
     ).definitionsText
 

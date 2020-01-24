@@ -1,25 +1,24 @@
 import {ReduxModule} from "../../state/Module";
 import {ApplicationState} from "../../state/State";
-import {Question as QuestionAction, QuestionType} from "../../state/ServerRPC";
+import {Question, QuestionAction, QuestionType} from "../../state/ServerRPC";
 
 const NAME = 'Question';
 
-export type QuestionDTO = Omit<QuestionAction, 'type'>
-
 export type State = {
-    question?: QuestionDTO;
+    question?: Question;
 }
 
-export const questionSelector = (state: ApplicationState): (QuestionDTO | undefined) => state[NAME].question;
+export const questionSelector = (state: ApplicationState): (Question | undefined) => state[NAME].question;
 
 type Actions = QuestionAction;
 
 export type QuestionState = Record<typeof NAME, State>;
 
-const defaultQuestion: QuestionDTO = {
+const defaultQuestion: Question = {
     questionId: 0,
     title: "Fibonacci",
-    code: `
+    text: `
+\`\`\`kotlin
 private fun mysteriousCode(foo: Int, bar: Int, baz: Int): Int {
     return when (foo) {
         0 -> baz
@@ -29,8 +28,8 @@ private fun mysteriousCode(foo: Int, bar: Int, baz: Int): Int {
         }
     }
 }
+\`\`\`
     `,
-    input: "5",
 };
 
 export const QuestionModule: ReduxModule<State, Actions> = {
