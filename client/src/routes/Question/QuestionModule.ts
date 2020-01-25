@@ -29,6 +29,8 @@ private fun mysteriousCode(foo: Int, bar: Int, baz: Int): Int {
     }
 }
 \`\`\`
+
+What is the output of this function given foo = 1, bar = 2, and baz = 3?
     `,
 };
 

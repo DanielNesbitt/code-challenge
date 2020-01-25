@@ -83,10 +83,8 @@ class TSGenerator(klasses: Iterable<KClass<*>>) {
 
         val name = klass.simpleName
         if (isReduxAction) {
-//            extends += " extends Action<typeof ${name}Type>"
             lines.add("export const ${name}Type = '$name';")
             lines.add("type ${name}ReduxAction = Action<typeof ${name}Type>;")
-//            properties.add(Pair("type", "typeof ${name}Type"))
         }
         lines.add("export interface $name$extends {")
         lines.addAll(properties.map { pair -> "    ${pair.first}: ${pair.second};" })
