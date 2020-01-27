@@ -1,24 +1,17 @@
-import React, {KeyboardEvent, useState} from "react";
+import React, {useState} from "react";
 import axios, {AxiosResponse} from "axios";
-import {
-    DefaultButton,
-    IStackTokens,
-    Label,
-    PrimaryButton,
-    Spinner,
-    SpinnerSize,
-    Stack,
-    TextField
-} from "office-ui-fabric-react";
+import {DefaultButton, Label, PrimaryButton, Spinner, SpinnerSize, Stack, TextField} from "office-ui-fabric-react";
 import {useDispatch} from "react-redux";
 import {loginSuccessfulAction} from "./LoginModule";
+import {fieldInput, onEnter} from "../../util/EventUtils";
+import {defaultChildGap} from "../../util/StackUtils";
 
 export const Login: React.FC = () => {
     const [user, setUser] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [busy, setBusy] = useState<boolean>(false);
     const [errorMsg, setErrorMsg] = useState<string>("");
-    const [createdMsg, setCreatedMsg] = useState<string> ("");
+    const [createdMsg, setCreatedMsg] = useState<string>("");
 
     const dispatch = useDispatch();
 
@@ -63,26 +56,19 @@ export const Login: React.FC = () => {
     const submitAction = doLoginAction("/api/login", dispatchLogin);
     const createAction = doLoginAction("/api/newUser", showMessage);
 
-    const tokens: IStackTokens = {
-        childrenGap: 10,
-    };
+    const tokens = defaultChildGap;
 
-    const onEnter = (e: KeyboardEvent) => {
-        if (e.keyCode === 13) {
-            // noinspection JSIgnoredPromiseFromCall
-            submitAction()
-        }
-    };
+    const onKeyEnter = onEnter(submitAction);
 
     return <Stack style={{height: "100%"}} verticalAlign="center" horizontalAlign="center">
-        <Stack className="ms-depth-8" style={{width: "17em", padding: "20px 30px"}} tokens={tokens}>
+        <Stack className="ms-depth-8" style={{width: "17em", padding: "20px 30px"}}
+               tokens={tokens}>
             <div className="ms-fontSize-42">Login</div>
-            <TextField label="Name" value={user} onChange={
-                (e, v) => setUser(v ?? '')
-            } onKeyUp={onEnter}/>
-            <TextField label="Password" type="password" value={password} errorMessage={errorMsg} onChange={(
-                e, v) => setPassword(v ?? '')
-            } onKeyUp={onEnter}/>
+            <TextField label="Name" value={user} onChange={fieldInput(setUser)}
+                       onKeyUp={onKeyEnter}/>
+            <TextField label="Password" type="password" value={password}
+                       errorMessage={errorMsg} onChange={fieldInput(setPassword)}
+                       onKeyUp={onKeyEnter}/>
             <Stack horizontal verticalAlign="center" tokens={tokens}>
                 <PrimaryButton text="Login" disabled={busy} onClick={submitAction}/>
                 <DefaultButton text="Create User" disabled={busy} onClick={createAction}/>

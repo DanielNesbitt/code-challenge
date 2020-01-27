@@ -1,19 +1,35 @@
-import React from "react";
-import {Stack} from "office-ui-fabric-react";
+import React, {useState} from "react";
+import {Label, PrimaryButton, Stack, TextField} from "office-ui-fabric-react";
 import {useTypedSelector} from "../../state/Store";
-import {Question} from "../../state/ServerRPC";
+import {createAnswerAction, Question} from "../../state/ServerRPC";
 import {PageSpinner} from "../../components/PageSpinner";
 import {questionSelector} from "./QuestionModule";
 import {MarkdownView} from "../../components/MarkdownView";
+import {fieldInput} from "../../util/EventUtils";
+import {useDispatch} from "react-redux";
+import {defaultChildGap} from "../../util/StackUtils";
 
 export const QuestionView: React.FC = () => {
     const question: Question | undefined = useTypedSelector(questionSelector);
-    return <Stack horizontal horizontalAlign="center" className="ms-depth-8" style={{margin: "20px"}}>
-        <div style={{width: "100%", padding: "10px"}}>
+    const [answer, setAnswer] = useState("");
+
+    const dispatch = useDispatch();
+    const dispatchAnswer = () => {
+        // TODO Prevent multiple dispatch?
+        if (question) {
+            dispatch(createAnswerAction({answer, questionId: question.questionId}));
+        }
+    };
+
+    return <Stack className="ms-depth-8" style={{margin: "20px", padding: "20px"}} tokens={defaultChildGap}>
+        <div style={{width: "100%"}}>
+            <Label>Question</Label>
             {question
                 ? <MarkdownView markdown={question?.text}/>
                 : <PageSpinner/>
             }
         </div>
+        <TextField label="Answer" value={answer} onChange={fieldInput(setAnswer)}/>
+        <PrimaryButton text="Submit" onClick={dispatchAnswer}/>
     </Stack>;
 };
