@@ -1,12 +1,11 @@
 // AUTO-GENERATED! Do not edit!
 import {Action} from "redux";
 
-export const RequestQuestionsType = 'RequestQuestions';
-type RequestQuestionsReduxAction = Action<typeof RequestQuestionsType>;
-export interface RequestQuestions {
-    questionId: number;
+export type SocketAction = {
+    meta: {
+        socket: true
+    }
 }
-export type RequestQuestionsAction = RequestQuestions & RequestQuestionsReduxAction;
 
 export interface QuestionEntry {
     questionId: number;
@@ -14,38 +13,31 @@ export interface QuestionEntry {
 }
 
 export const QuestionsResponseType = 'QuestionsResponse';
-type QuestionsResponseReduxAction = Action<typeof QuestionsResponseType>;
-
 export interface QuestionsResponse {
     questions: QuestionEntry[];
 }
-
-export type QuestionsResponseAction = QuestionsResponse & QuestionsResponseReduxAction;
+export type QuestionsResponseAction = QuestionsResponse & Action<typeof QuestionsResponseType>;
 
 export const QuestionType = 'Question';
-type QuestionReduxAction = Action<typeof QuestionType>;
-
 export interface Question {
     questionId: number;
     text: string;
     title: string;
 }
-
-export type QuestionAction = Question & QuestionReduxAction;
+export type QuestionAction = Question & Action<typeof QuestionType>;
 
 export const AnswerType = 'Answer';
-type AnswerReduxAction = Action<typeof AnswerType>;
-
 export interface Answer {
     answer: string;
     questionId: number;
 }
-
-export type AnswerAction = Answer & AnswerReduxAction;
-
-export function createAnswerAction(arg: Answer): AnswerAction {
+export type AnswerAction = Answer & Action<typeof AnswerType>;
+export function createAnswerAction(arg: Answer): AnswerAction & SocketAction {
     return {
         ...arg,
         type: AnswerType,
+        meta: {
+            socket: true
+        }
     }
 }

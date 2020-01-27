@@ -18,8 +18,12 @@ class TSGenerator(klasses: Iterable<KClass<*>>) {
     private val typeConverter = TypeConverter()
     private val visitedClasses = mutableSetOf<KClass<*>>()
     private val definitions = mutableListOf<String>()
+
     private val ActionType = ReduxAction::class.createType()
     private val SocketActionType = SocketAction::class.createType()
+
+    private var hitAction = false
+    private var hitSocketAction = false
 
     private val ignoredSuperclasses = setOf(
         Any::class,
@@ -32,7 +36,23 @@ class TSGenerator(klasses: Iterable<KClass<*>>) {
     }
 
     val definitionsText: String
-        get() = definitions.joinToString(separator = "\n\n")
+        get() {
+            val lines = mutableListOf<String>()
+            if (hitAction) {
+                lines.add("import {Action} from \"redux\";")
+            }
+            if (hitSocketAction) {
+                lines.add("""
+                    export type SocketAction = {
+                        meta: {
+                            socket: true
+                        }
+                    }
+                """.trimIndent())
+            }
+            lines.addAll(definitions)
+            return lines.joinToString(separator = "\n\n")
+        }
 
     private fun visitClass(klass: KClass<*>) {
         if (klass !in visitedClasses) {
@@ -66,6 +86,10 @@ class TSGenerator(klasses: Iterable<KClass<*>>) {
         val superTypes = klass.supertypes.filterNot { it.classifier in ignoredSuperclasses }.toMutableList()
         val isSocketAction = superTypes.remove(SocketActionType)
         val isReduxAction = isSocketAction || superTypes.remove(ActionType)
+
+        hitSocketAction = hitSocketAction || isSocketAction
+        hitAction = hitAction || isReduxAction
+
         var extends = if (superTypes.isNotEmpty()) " extends " else "" +
             superTypes.joinToString(separator = " & ") { convert(it).typeName }
 
@@ -84,21 +108,25 @@ class TSGenerator(klasses: Iterable<KClass<*>>) {
         val name = klass.simpleName
         if (isReduxAction) {
             lines.add("export const ${name}Type = '$name';")
-            lines.add("type ${name}ReduxAction = Action<typeof ${name}Type>;")
         }
         lines.add("export interface $name$extends {")
         lines.addAll(properties.map { pair -> "    ${pair.first}: ${pair.second};" })
         lines.add("}")
         if (isReduxAction) {
-            lines.add("export type ${name}Action = ${name} & ${name}ReduxAction;")
+            lines.add("export type ${name}Action = ${name} & Action<typeof ${name}Type>;")
         }
         if (isSocketAction) {
-            lines.add("export function create${name}Action(arg: ${name}): ${name}Action {")
-            lines.add("    return {")
-            lines.add("        ...arg,")
-            lines.add("        type: ${name}Type,")
-            lines.add("    }")
-            lines.add("}")
+            lines.add("""
+                export function create${name}Action(arg: ${name}): ${name}Action & SocketAction {
+                    return {
+                        ...arg,
+                        type: ${name}Type,
+                        meta: {
+                            socket: true
+                        }
+                    }
+                }
+            """.trimIndent())
         }
 
         return lines.joinToString(separator = "\n")

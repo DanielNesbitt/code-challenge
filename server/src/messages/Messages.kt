@@ -43,7 +43,7 @@ fun main() {
         )
     ).definitionsText
 
-    val template = "// AUTO-GENERATED! Do not edit!\nimport {Action} from \"redux\";\n\n${rpcMessages}"
+    val template = "// AUTO-GENERATED! Do not edit!\n${rpcMessages}"
 
     File("client/src/state/ServerRPC.ts").writeText(template)
     println(rpcMessages)
