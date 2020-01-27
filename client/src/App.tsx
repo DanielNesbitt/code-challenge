@@ -10,6 +10,7 @@ import {QuestionView} from "./routes/Question/QuestionView";
 import {Login} from "./routes/Login/Login";
 import {loginSuccessfulAction, userSelector} from "./routes/Login/LoginModule";
 import "./App.css";
+import {Breadcrumb, IBreadcrumbItem} from "office-ui-fabric-react";
 
 const history = createBrowserHistory();
 
@@ -40,11 +41,16 @@ const AppView: React.FC = () => {
         });
     });
 
+    const items: IBreadcrumbItem[] = [
+        {text: 'Files', key: 'Files'},
+        {text: 'Folder 1', key: 'f1'},
+    ];
+
     const user = useTypedSelector(userSelector);
     const Body = !!user ? <Routing/> : <Login/>;
     return (
-        <div className="App">
-            {user ? <h1>{user}</h1> : null}
+        <div className="App" style={{padding: "20px"}}>
+            {user ? <Breadcrumb items={items} style={{padding: "0px 0px 10px 0px"}}/> : null}
             {loaded ? Body : <PageSpinner/>}
         </div>
     );

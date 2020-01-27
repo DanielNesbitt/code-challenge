@@ -21,7 +21,7 @@ export const QuestionView: React.FC = () => {
         }
     };
 
-    return <Stack className="ms-depth-8" style={{margin: "20px", padding: "20px"}} tokens={defaultChildGap}>
+    return <Stack className="ms-depth-8" style={{padding: "20px"}} tokens={defaultChildGap}>
         <div style={{width: "100%"}}>
             <Label>Question</Label>
             {question
