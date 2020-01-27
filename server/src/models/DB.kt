@@ -28,30 +28,29 @@ class DB {
             SchemaUtils.create(Users, Questions, Answers, Scores)
         }
     }
+}
 
-    fun newUser(newUserName: String, newUserPwd: String): String {
-        return transaction {
-            if (Users.slice(Users.name).selectAll().map{ it[Users.name] }.toSet().contains(newUserName)) {
-                throw RuntimeException("User name ${newUserName} already in use.")
-            }
-            val pass = hashPassword(newUserPwd)
-            Users.insert {
-                it[name] = newUserName
-                it[passwordHash] = pass
-            } get Users.name
+fun newUser(newUserName: String, newUserPwd: String): String {
+    return transaction {
+        if (Users.slice(Users.name).selectAll().map{ it[Users.name] }.toSet().contains(newUserName)) {
+            throw RuntimeException("User name ${newUserName} already in use.")
         }
+        val pass = hashPassword(newUserPwd)
+        Users.insert {
+            it[name] = newUserName
+            it[passwordHash] = pass
+        } get Users.name
     }
+}
 
-    fun getUser(name: String): User? {
-        return transaction {
-            Users.select { Users.name eq name }.map {
-                User(
-                    id = it[Users.id],
-                    name = it[Users.name],
-                    passwordHash = it[Users.passwordHash]
-                )
-            }.firstOrNull()
-        }
+fun getUser(name: String): User? {
+    return transaction {
+        Users.select { Users.name eq name }.map {
+            User(
+                id = it[Users.id],
+                name = it[Users.name],
+                passwordHash = it[Users.passwordHash]
+            )
+        }.firstOrNull()
     }
-
 }

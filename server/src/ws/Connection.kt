@@ -2,7 +2,9 @@
 
 package com.genedata.ws
 
+import com.genedata.messages.RequestQuestions
 import com.genedata.messages.generator.ReduxAction
+import com.genedata.models.getUser
 import io.ktor.http.cio.websocket.Frame
 import io.ktor.websocket.DefaultWebSocketServerSession
 import kotlinx.coroutines.channels.SendChannel
@@ -11,9 +13,18 @@ import kotlinx.coroutines.channels.actor
 /**
  * @author Daniel Nesbitt
  */
-suspend fun DefaultWebSocketServerSession.createConnection(user:String) = actor<ReduxAction> {
-    for (msg in channel) {
-        // TODO Business logic
+suspend fun DefaultWebSocketServerSession.createConnection(username:String) = actor<ReduxAction> {
+    val user = getUser(username)
+    if (user == null) {
+        // close
+    } else {
+        val userId = user.id
+        for (msg in channel) {
+            // TODO Business logic
+            when (msg) {
+                is RequestQuestions -> send()
+            }
+        }
     }
 }
 

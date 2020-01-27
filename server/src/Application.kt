@@ -2,6 +2,7 @@ package com.genedata
 
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.genedata.models.DB
+import com.genedata.models.newUser
 import com.genedata.session.USER_SESSION
 import com.genedata.session.UserSession
 import com.genedata.session.createValidator
@@ -32,8 +33,6 @@ import kotlin.collections.set
 val db = DB()
 
 fun main(args: Array<String>) {
-    db.newUser("daniel", "daniel")
-    db.newUser("alice", "alice")
     io.ktor.server.netty.EngineMain.main(args)
 }
 
@@ -84,6 +83,10 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
         }
     }
 
+    // init
+    newUser("daniel", "daniel")
+    newUser("alice", "alice")
+
     routing {
         get("/") {
             call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
@@ -105,7 +108,7 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
                 }
             }
             try {
-                val newUser = db.newUser(name, pwd)
+                val newUser = newUser(name, pwd)
                 call.respondText("User ${newUser} created.")
             } catch (th: Throwable) {
                 call.respond(HttpStatusCode.BadRequest, th.message ?: "")
