@@ -1,6 +1,5 @@
 package com.genedata.session
 
-import com.genedata.models.DB
 import com.genedata.models.getUser
 import io.ktor.application.ApplicationCall
 import io.ktor.auth.Principal
@@ -13,7 +12,7 @@ import org.mindrot.jbcrypt.BCrypt
  */
 val NUM_ROUNDS = 8
 
-fun createValidator(db: DB): suspend ApplicationCall.(UserPasswordCredential) -> Principal? {
+fun createValidator(): suspend ApplicationCall.(UserPasswordCredential) -> Principal? {
     return {
         val user = getUser(it.name)
         if (user != null && user.validatePassword(it.password))
