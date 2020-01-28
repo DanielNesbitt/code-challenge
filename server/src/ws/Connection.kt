@@ -7,7 +7,10 @@ import com.genedata.messages.Answer
 import com.genedata.messages.RequestQuestions
 import com.genedata.messages.generator.ReduxAction
 import com.genedata.messages.generator.SocketAction
-import com.genedata.models.*
+import com.genedata.models.AnswerSet
+import com.genedata.models.getAnswerSet
+import com.genedata.models.getQuestion
+import com.genedata.models.getUser
 import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.readText
 import io.ktor.websocket.DefaultWebSocketServerSession
@@ -19,7 +22,7 @@ import kotlinx.coroutines.withContext
 /**
  * @author Daniel Nesbitt
  */
-suspend fun DefaultWebSocketServerSession.createConnection(username:String) = actor<ReduxAction> {
+suspend fun DefaultWebSocketServerSession.createConnection(username: String) = actor<ReduxAction> {
     val user = getUser(username)
     if (user == null) {
         // close
@@ -31,7 +34,7 @@ suspend fun DefaultWebSocketServerSession.createConnection(username:String) = ac
             when (msg) {
                 is RequestQuestions -> {
                     current = getAnswerSet(userId, msg.questionId)
-                    current?.let{channel.send(getQuestion(msg.questionId) as ReduxAction)}
+                    current?.let { channel.send(getQuestion(msg.questionId) as ReduxAction) }
                 }
                 is Answer -> println(msg.questionId)
             }
@@ -44,8 +47,12 @@ suspend fun DefaultWebSocketServerSession.connect(user: String, manager: SendCha
 
     val connection = createConnection(user)
     for (msg in incoming) {
-        when (msg) {
-            is Frame.Text -> connection.send(fromJson(msg.readText()))
+        try {
+            when (msg) {
+                is Frame.Text -> connection.send(fromJson(msg.readText()))
+            }
+        } catch (th: Throwable) {
+            th.printStackTrace()
         }
     }
 }

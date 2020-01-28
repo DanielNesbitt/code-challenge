@@ -33,14 +33,16 @@ data class Answer(
     val answer: String
 ) : SocketAction
 
+val RPC_CLASSES = setOf(
+    RequestQuestions::class,
+    QuestionsResponse::class,
+    Question::class,
+    Answer::class
+)
+
 fun main() {
     val rpcMessages = TSGenerator(
-        setOf(
-            RequestQuestions::class,
-            QuestionsResponse::class,
-            Question::class,
-            Answer::class
-        )
+        RPC_CLASSES
     ).definitionsText
 
     val template = "// AUTO-GENERATED! Do not edit!\n${rpcMessages}"
