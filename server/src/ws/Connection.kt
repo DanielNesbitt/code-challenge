@@ -4,6 +4,7 @@ package com.genedata.ws
 
 import com.genedata.messages.RequestQuestions
 import com.genedata.messages.generator.ReduxAction
+import com.genedata.models.Questions
 import com.genedata.models.getUser
 import io.ktor.http.cio.websocket.Frame
 import io.ktor.websocket.DefaultWebSocketServerSession
@@ -21,9 +22,6 @@ suspend fun DefaultWebSocketServerSession.createConnection(username:String) = ac
         val userId = user.id
         for (msg in channel) {
             // TODO Business logic
-            when (msg) {
-                is RequestQuestions -> send()
-            }
         }
     }
 }
