@@ -45,7 +45,7 @@
         "jest-watch-typeahead": "0.4.2",
         "mini-css-extract-plugin": "0.8.0",
         "office-ui-fabric-core": "^11.0.0",
-        "office-ui-fabric-react": "^7.81.0",
+        "office-ui-fabric-react": "^7.85.0",
         "optimize-css-assets-webpack-plugin": "5.0.3",
         "pnp-webpack-plugin": "1.5.0",
         "postcss-flexbugs-fixes": "4.1.0",
