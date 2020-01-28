@@ -59,7 +59,7 @@ const AppView: React.FC = () => {
     });
 
     const location = useLocation();
-    const question: Question | undefined = useTypedSelector(questionSelector);
+    const question = useTypedSelector(questionSelector);
     const items = createBreadCrumb(location, question);
 
     const user = useTypedSelector(userSelector);

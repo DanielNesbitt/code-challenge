@@ -18,7 +18,7 @@ const columns: IColumn[] = [
 ];
 
 export const Home: React.FC = () => {
-    const questions: QuestionEntry[] | undefined = useTypedSelector(questionsSelector);
+    const questions = useTypedSelector(questionsSelector);
     return <Stack horizontal horizontalAlign="center" className="ms-depth-8" style={{margin: "20px"}}>
         <div style={{width: "100%", padding: "10px"}}>
             {questions ?

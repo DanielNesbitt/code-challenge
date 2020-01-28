@@ -10,7 +10,7 @@ import {useDispatch} from "react-redux";
 import {defaultChildGap} from "../../util/StackUtils";
 
 export const QuestionView: React.FC = () => {
-    const question: Question | undefined = useTypedSelector(questionSelector);
+    const question = useTypedSelector(questionSelector);
     const [answer, setAnswer] = useState("");
 
     const dispatch = useDispatch();
