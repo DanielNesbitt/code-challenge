@@ -1,6 +1,7 @@
 package com.genedata
 
 import com.fasterxml.jackson.databind.SerializationFeature
+import com.genedata.models.DB
 import com.genedata.models.newUser
 import com.genedata.session.USER_SESSION
 import com.genedata.session.UserSession
@@ -30,6 +31,7 @@ import java.time.Duration
 import kotlin.collections.set
 
 fun main(args: Array<String>) {
+    DB.initialize()
     io.ktor.server.netty.EngineMain.main(args)
 }
 

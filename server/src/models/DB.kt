@@ -21,8 +21,8 @@ data class User(val id: Long, val name: String, val passwordHash: String) {
     }
 }
 
-class DB {
-    init {
+object DB {
+    fun initialize() {
         Database.connect("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", driver = "org.h2.Driver")
         transaction {
             SchemaUtils.create(Users)
