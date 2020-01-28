@@ -97,16 +97,18 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
             var pwd = ""
             while (true) {
                 val part = multipart.readPart() ?: break
-                // TODO Ensure that empty user name and password do not work
                 if (part is PartData.FormItem) {
-                    if (part.name == "name") {
-                        name = part.value
-                    } else if (part.name == "password") {
-                        pwd = part.value
+                    val value = part.value.trim()
+                    when (part.name) {
+                        "name" -> name = value
+                        "password" -> pwd = value
                     }
                 }
             }
             try {
+                if (name.isEmpty() || pwd.isEmpty()) {
+                    throw RuntimeException("Empty user name or password not allowed.")
+                }
                 val newUser = newUser(name, pwd)
                 call.respondText("User ${newUser} created.")
             } catch (th: Throwable) {
