@@ -1,5 +1,7 @@
 package com.genedata.models
 
+import com.genedata.messages.Answer
+import com.genedata.messages.Question
 import com.genedata.messages.QuestionEntry
 import com.genedata.messages.QuestionsResponse
 import org.jetbrains.exposed.sql.*
@@ -19,8 +21,6 @@ object Questions : Table() {
     val code = Questions.varchar("code", 500)
 }
 
-data class Question(val id: Long, val title: String, val code: String)
-
 object Answers : Table() {
     val id = Answers.long("answer_id").autoIncrement().primaryKey().uniqueIndex()
     val question = Answers.long("question_id").uniqueIndex()
@@ -28,7 +28,7 @@ object Answers : Table() {
     val output = Answers.varchar("output", 500)
 }
 
-data class Answer(val id: Long, val question: Long, val input: String, val output: String)
+data class AnswerSet(val id: Long, val question: Long, val input: String, val output: String)
 
 object Scores : Table() {
     val user = long("user_id").uniqueIndex()
@@ -36,37 +36,34 @@ object Scores : Table() {
     val score = integer("score")
 }
 
-fun getAnswer(userId: Long, question: Long): Answer {
+fun getAnswerSet(userId: Long, question: Long): AnswerSet? {
     return transaction {
         val previousAnswers = Scores.slice(Scores.answer)
             .select { Scores.user eq userId }
             .map { it[Scores.answer] }
         val availableAnswers = Answers.select { Answers.question eq question }
             .andWhere { Answers.id notInList previousAnswers }
-            .map { Answer(it[Answers.id], it[Answers.question], it[Answers.input], it[Answers.output]) }
-        availableAnswers[Random.nextInt(0, availableAnswers.size)]
+            .map { AnswerSet(it[Answers.id], it[Answers.question], it[Answers.input], it[Answers.output]) }
+        if (availableAnswers.isNotEmpty()) availableAnswers[Random.nextInt(0, availableAnswers.size)] else null
     }
 }
 
-fun submitAnswer(userId: Long, submitted: String, current: Answer) {
-    transaction {
-        Scores.insert {
-            it[user] = userId
-            it[answer] = current.id
-            it[score] = if (current.output == submitted) CORRECT_POINTS else INCORRECT_POINTS
+fun submitAnswer(userId: Long, submitted: Answer, current: AnswerSet) {
+    return transaction {
+        if (current.question == submitted.questionId) {
+            Scores.insert {
+                it[user] = userId
+                it[answer] = current.id
+                it[score] = if (current.output == submitted.answer) CORRECT_POINTS else INCORRECT_POINTS
+            }
         }
     }
 }
 
-fun getQuestion(userId: Long): String? {
+fun getQuestion(questionId: Long): Question? {
     return transaction {
-        val lastQuestion = Scores.select { Scores.user eq userId }
-            .map { it[Scores.answer] }
-            .max()
-
-        val next = lastQuestion?.let { it + 1 } ?: 0
-        Questions.select { Questions.id eq next }
-            .map { it[Questions.code] }
+        Questions.select { Questions.id eq questionId }
+            .map { Question(it[Questions.id], it[Questions.title], it[Questions.code]) }
             .firstOrNull()
     }
 }

@@ -10,12 +10,12 @@ import org.mindrot.jbcrypt.BCrypt
  */
 
 object Users : Table() {
-    val id = integer("user_id").autoIncrement().primaryKey().uniqueIndex()
+    val id = long("user_id").autoIncrement().primaryKey().uniqueIndex()
     val name = varchar("name", 50)
     val passwordHash = varchar("passwordHash", 120)
 }
 
-data class User(val id: Int, val name: String, val passwordHash: String) {
+data class User(val id: Long, val name: String, val passwordHash: String) {
     fun validatePassword(password: String): Boolean {
         return BCrypt.checkpw(password, passwordHash)
     }

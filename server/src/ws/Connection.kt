@@ -2,10 +2,10 @@
 
 package com.genedata.ws
 
+import com.genedata.messages.Answer
 import com.genedata.messages.RequestQuestions
 import com.genedata.messages.generator.ReduxAction
-import com.genedata.models.Questions
-import com.genedata.models.getUser
+import com.genedata.models.*
 import io.ktor.http.cio.websocket.Frame
 import io.ktor.websocket.DefaultWebSocketServerSession
 import kotlinx.coroutines.channels.SendChannel
@@ -20,8 +20,15 @@ suspend fun DefaultWebSocketServerSession.createConnection(username:String) = ac
         // close
     } else {
         val userId = user.id
+        var current: AnswerSet? = null
         for (msg in channel) {
             // TODO Business logic
+            when (msg) {
+                is RequestQuestions -> {
+                    current = getAnswerSet(userId, msg.questionId)
+                    current?.let{channel.send(getQuestion(msg.questionId) as ReduxAction)}
+                }
+            }
         }
     }
 }
