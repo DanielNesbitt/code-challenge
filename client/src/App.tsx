@@ -1,20 +1,22 @@
 import React, {useEffect, useState} from "react";
 import {Provider, useDispatch} from "react-redux";
-import {Route, Router, Switch} from "react-router";
-import {createBrowserHistory} from "history";
+import {Route, Router, Switch, useLocation} from "react-router";
+import {createBrowserHistory, Location} from "history";
 import axios, {AxiosResponse} from "axios";
-import {store, useTypedSelector} from "./state/Store";
-import {PageSpinner} from "./components/PageSpinner";
-import {Home} from "./routes/Home/Home";
-import {QuestionView} from "./routes/Question/QuestionView";
-import {Login} from "./routes/Login/Login";
-import {loginSuccessfulAction, userSelector} from "./routes/Login/LoginModule";
-import "./App.css";
 import {Breadcrumb, IBreadcrumbItem} from "office-ui-fabric-react";
+import {store, useTypedSelector} from "./state/Store";
+import {Question} from "./state/ServerRPC";
+import {PageSpinner} from "./components/PageSpinner";
+import {loginSuccessfulAction, userSelector} from "./routes/Login/LoginModule";
+import {Login} from "./routes/Login/Login";
+import {Home} from "./routes/Home/Home";
+import {questionSelector} from "./routes/Question/QuestionModule";
+import {QuestionView} from "./routes/Question/QuestionView";
+import "./App.css";
 
 const history = createBrowserHistory();
 
-const Routing: React.FC = () => (<Router history={history}>
+const Routing: React.FC = () => (
     <Switch>
         <Route path="/question/:id">
             <QuestionView/>
@@ -23,7 +25,22 @@ const Routing: React.FC = () => (<Router history={history}>
             <Home/>
         </Route>
     </Switch>
-</Router>);
+);
+
+const createBreadCrumb = (location: Location, question: Question | undefined): IBreadcrumbItem[] => {
+    const crumb: IBreadcrumbItem[] = [
+        {
+            text: 'Home', key: 'Home', onClick: () => {
+                history.push('/')
+            }
+        },
+    ];
+    const paths = location.pathname.trim().split('/');
+    if (paths[1] === 'question' && !!question) {
+        crumb.push({text: question?.title, key: question?.title});
+    }
+    return crumb;
+};
 
 const AppView: React.FC = () => {
     const [loaded, setLoaded] = useState(false);
@@ -41,10 +58,9 @@ const AppView: React.FC = () => {
         });
     });
 
-    const items: IBreadcrumbItem[] = [
-        {text: 'Files', key: 'Files'},
-        {text: 'Folder 1', key: 'f1'},
-    ];
+    const location = useLocation();
+    const question: Question | undefined = useTypedSelector(questionSelector);
+    const items = createBreadCrumb(location, question);
 
     const user = useTypedSelector(userSelector);
     const Body = !!user ? <Routing/> : <Login/>;
@@ -58,6 +74,8 @@ const AppView: React.FC = () => {
 
 export const App: React.FC = () => (
     <Provider store={store}>
-        <AppView/>
+        <Router history={history}>
+            <AppView/>
+        </Router>
     </Provider>
 );
