@@ -19,7 +19,7 @@ object Questions : Table() {
     val code = Questions.varchar("code", 500)
 }
 
-data class Question(val id: Int, val title: String, val code: String)
+data class Question(val id: Long, val title: String, val code: String)
 
 object Answers : Table() {
     val id = Answers.long("answer_id").autoIncrement().primaryKey().uniqueIndex()
@@ -28,15 +28,15 @@ object Answers : Table() {
     val output = Answers.varchar("output", 500)
 }
 
-data class Answer(val id: Int, val question: Int, val input: String, val output: String)
+data class Answer(val id: Long, val question: Long, val input: String, val output: String)
 
 object Scores : Table() {
     val user = long("user_id").uniqueIndex()
     val answer = long("answer_id").uniqueIndex()
-    val score = long("score")
+    val score = integer("score")
 }
 
-fun getAnswer(userId: Int, question: Int): Answer {
+fun getAnswer(userId: Long, question: Long): Answer {
     return transaction {
         val previousAnswers = Scores.slice(Scores.answer)
             .select { Scores.user eq userId }
@@ -48,7 +48,7 @@ fun getAnswer(userId: Int, question: Int): Answer {
     }
 }
 
-fun submitAnswer(userId: Int, submitted: String, current: Answer) {
+fun submitAnswer(userId: Long, submitted: String, current: Answer) {
     transaction {
         Scores.insert {
             it[user] = userId
@@ -58,7 +58,7 @@ fun submitAnswer(userId: Int, submitted: String, current: Answer) {
     }
 }
 
-fun getQuestion(userId: Int): String? {
+fun getQuestion(userId: Long): String? {
     return transaction {
         val lastQuestion = Scores.select { Scores.user eq userId }
             .map { it[Scores.answer] }
