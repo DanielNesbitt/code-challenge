@@ -1,6 +1,7 @@
 package com.genedata
 
 import com.fasterxml.jackson.databind.SerializationFeature
+import com.genedata.messages.Json
 import com.genedata.models.DB
 import com.genedata.models.newUser
 import com.genedata.session.USER_SESSION
@@ -32,6 +33,7 @@ import kotlin.collections.set
 
 fun main(args: Array<String>) {
     DB.initialize()
+    Json.initializeMapper()
     io.ktor.server.netty.EngineMain.main(args)
 }
 
