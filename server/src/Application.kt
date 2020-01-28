@@ -1,7 +1,6 @@
 package com.genedata
 
 import com.fasterxml.jackson.databind.SerializationFeature
-import com.genedata.models.DB
 import com.genedata.models.newUser
 import com.genedata.session.USER_SESSION
 import com.genedata.session.UserSession
@@ -29,8 +28,6 @@ import io.ktor.websocket.webSocket
 import java.security.SecureRandom
 import java.time.Duration
 import kotlin.collections.set
-
-val db = DB()
 
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)
@@ -73,7 +70,7 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
             userParamName = "name"
             passwordParamName = "password"
             skipWhen { it.sessions.get<UserSession>() != null }
-            validate(createValidator(db))
+            validate(createValidator())
         }
     }
 
