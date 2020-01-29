@@ -7,9 +7,15 @@ export type SocketAction = {
     }
 }
 
+export const RequestQuestionsType = 'RequestQuestions';
+export interface RequestQuestions {
+    questionId: number;
+}
+export type RequestQuestionsAction = RequestQuestions & Action<typeof RequestQuestionsType>;
+
 export interface QuestionEntry {
     questionId: number;
-    questionTitle: string;
+    title: string;
 }
 
 export const QuestionsResponseType = 'QuestionsResponse';
@@ -41,3 +47,10 @@ export function createAnswerAction(arg: Answer): AnswerAction & SocketAction {
         }
     }
 }
+
+export const AnswerResultType = 'AnswerResult';
+export interface AnswerResult {
+    correct: boolean;
+    questionId: number;
+}
+export type AnswerResultAction = AnswerResult & Action<typeof AnswerResultType>;

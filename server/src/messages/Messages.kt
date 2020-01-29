@@ -52,7 +52,7 @@ data class RequestQuestions(
 
 data class QuestionEntry(
     val questionId: Long,
-    val questionTitle: String
+    val title: String
 )
 
 data class QuestionsResponse(

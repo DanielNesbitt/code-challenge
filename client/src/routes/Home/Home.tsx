@@ -1,8 +1,8 @@
 import React from "react";
-import {DetailsList, IColumn, SelectionMode, Stack} from "office-ui-fabric-react";
+import {DetailsList, IColumn, Link, SelectionMode, Stack} from "office-ui-fabric-react";
 import {questionsSelector} from "./HomeModule";
-import {QuestionEntry} from "../../state/ServerRPC";
 import {useTypedSelector} from "../../state/Store";
+import {QuestionEntry} from "../../state/ServerRPC";
 
 const columns: IColumn[] = [
     {
@@ -13,7 +13,10 @@ const columns: IColumn[] = [
     {
         key: 'question',
         name: 'Question',
-        fieldName: 'questionTitle',
+        onRender: (item) => {
+            const question = item as QuestionEntry;
+            return <Link href={`/question/${question.questionId}`}>{question.title}</Link>
+        }
     } as IColumn
 ];
 
