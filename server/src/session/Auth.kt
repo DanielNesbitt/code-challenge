@@ -10,7 +10,7 @@ import org.mindrot.jbcrypt.BCrypt
 /**
  * @author Daniel Nesbitt
  */
-val NUM_ROUNDS = 8
+const val NUM_ROUNDS = 8
 
 fun createValidator(): suspend ApplicationCall.(UserPasswordCredential) -> Principal? {
     return {
