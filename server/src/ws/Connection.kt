@@ -25,6 +25,7 @@ suspend fun WebSocketServerSession.createConnection(username: String) = actor<Re
     if (user == null) {
         // close
     } else {
+        send(dummyQuestions())
         val userId = user.id
         var current: AnswerSet? = null
         for (msg in channel) {
@@ -65,4 +66,10 @@ private suspend fun fromJson(value: String): SocketAction {
             .readValue(value, SocketAction::class.java)
     }
 }
+
+private fun dummyQuestions() = QuestionsResponse(listOf(
+    QuestionEntry(0, "The first question"),
+    QuestionEntry(1, "The second question"),
+    QuestionEntry(2, "The third question")
+))
 
