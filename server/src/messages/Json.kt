@@ -12,7 +12,7 @@ import kotlinx.coroutines.withContext
 object Json {
 
     fun initializeMapper() {
-        val mapper = jacksonObjectMapper()
+//        val mapper = jacksonObjectMapper()
     }
 
     suspend fun toJsonString(obj: Any): String {

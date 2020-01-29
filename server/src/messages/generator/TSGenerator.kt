@@ -1,5 +1,7 @@
 package com.genedata.messages.generator
 
+import com.genedata.messages.ReduxAction
+import com.genedata.messages.SocketAction
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import kotlin.reflect.KCallable

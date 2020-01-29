@@ -3,17 +3,15 @@
 package com.genedata.ws
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.genedata.messages.Answer
-import com.genedata.messages.RequestQuestions
-import com.genedata.messages.generator.ReduxAction
-import com.genedata.messages.generator.SocketAction
+import com.genedata.messages.*
 import com.genedata.models.AnswerSet
 import com.genedata.models.getAnswerSet
 import com.genedata.models.getQuestion
 import com.genedata.models.getUser
 import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.readText
-import io.ktor.websocket.DefaultWebSocketServerSession
+import io.ktor.http.cio.websocket.send
+import io.ktor.websocket.WebSocketServerSession
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.actor
@@ -22,7 +20,7 @@ import kotlinx.coroutines.withContext
 /**
  * @author Daniel Nesbitt
  */
-suspend fun DefaultWebSocketServerSession.createConnection(username: String) = actor<ReduxAction> {
+suspend fun WebSocketServerSession.createConnection(username: String) = actor<ReduxAction> {
     val user = getUser(username)
     if (user == null) {
         // close
@@ -42,7 +40,7 @@ suspend fun DefaultWebSocketServerSession.createConnection(username: String) = a
     }
 }
 
-suspend fun DefaultWebSocketServerSession.connect(user: String, manager: SendChannel<ConnectionManagerMsg>) {
+suspend fun WebSocketServerSession.connect(user: String, manager: SendChannel<ConnectionManagerMsg>) {
     manager.send(Connect(user, this))
 
     val connection = createConnection(user)
@@ -55,6 +53,10 @@ suspend fun DefaultWebSocketServerSession.connect(user: String, manager: SendCha
             th.printStackTrace()
         }
     }
+}
+
+suspend fun WebSocketServerSession.send(action: ReduxAction) {
+    send(Json.toJsonString(action))
 }
 
 private suspend fun fromJson(value: String): SocketAction {
