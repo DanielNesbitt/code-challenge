@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Provider, useDispatch} from "react-redux";
 import {Route, Router, Switch, useLocation} from "react-router";
 import {createBrowserHistory, Location} from "history";
-import axios, {AxiosResponse} from "axios";
+import axios from "axios";
 import {Breadcrumb, IBreadcrumbItem} from "office-ui-fabric-react";
 import {store, useTypedSelector} from "./state/Store";
 import {Question} from "./state/ServerRPC";
@@ -45,18 +45,15 @@ const createBreadCrumb = (location: Location, question: Question | undefined): I
 const AppView: React.FC = () => {
     const [loaded, setLoaded] = useState(false);
     const dispatch = useDispatch();
-    const dispatchLogin = (response: AxiosResponse) => {
-        dispatch(loginSuccessfulAction(response.data, response.data))
-    };
 
     useEffect(() => {
         axios("/api/user").then(response => {
             if (!!response.data) {
-                dispatchLogin(response)
+                dispatch(loginSuccessfulAction(response.data, response.data))
             }
             setLoaded(true);
         });
-    });
+    }, [dispatch]);
 
     const location = useLocation();
     const question = useTypedSelector(questionSelector);

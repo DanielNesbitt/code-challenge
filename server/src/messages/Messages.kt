@@ -39,16 +39,13 @@ interface ReduxAction {
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type")
 @JsonSubTypes(
-    JsonSubTypes.Type(Answer::class, name = "Answer")
+    JsonSubTypes.Type(Answer::class, name = "Answer"),
+    JsonSubTypes.Type(RequestQuestion::class, name = "RequestQuestion")
 )
 @JsonIgnoreProperties(ignoreUnknown = true)
 interface SocketAction : ReduxAction
 
 // ===============================================
-
-data class RequestQuestions(
-    val questionId: Long
-) : ReduxAction
 
 data class QuestionEntry(
     val questionId: Long,
@@ -58,6 +55,10 @@ data class QuestionEntry(
 data class QuestionsResponse(
     val questions: List<QuestionEntry>
 ) : ReduxAction
+
+data class RequestQuestion(
+    val questionId: Long
+) : SocketAction
 
 data class Question(
     val questionId: Long,
@@ -78,8 +79,8 @@ data class AnswerResult(
 // ===============================================
 
 val RPC_CLASSES = setOf(
-    RequestQuestions::class,
     QuestionsResponse::class,
+    RequestQuestion::class,
     Question::class,
     Answer::class,
     AnswerResult::class

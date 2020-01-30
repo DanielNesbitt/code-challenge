@@ -7,29 +7,45 @@ export type SocketAction = {
     }
 }
 
-export const RequestQuestionsType = 'RequestQuestions';
-export interface RequestQuestions {
-    questionId: number;
-}
-export type RequestQuestionsAction = RequestQuestions & Action<typeof RequestQuestionsType>;
-
 export interface QuestionEntry {
     questionId: number;
     title: string;
 }
 
 export const QuestionsResponseType = 'QuestionsResponse';
+
 export interface QuestionsResponse {
     questions: QuestionEntry[];
 }
+
 export type QuestionsResponseAction = QuestionsResponse & Action<typeof QuestionsResponseType>;
 
+export const RequestQuestionType = 'RequestQuestion';
+
+export interface RequestQuestion {
+    questionId: number;
+}
+
+export type RequestQuestionAction = RequestQuestion & Action<typeof RequestQuestionType>;
+
+export function createRequestQuestionAction(arg: RequestQuestion): RequestQuestionAction & SocketAction {
+    return {
+        ...arg,
+        type: RequestQuestionType,
+        meta: {
+            socket: true
+        }
+    }
+}
+
 export const QuestionType = 'Question';
+
 export interface Question {
     questionId: number;
     text: string;
     title: string;
 }
+
 export type QuestionAction = Question & Action<typeof QuestionType>;
 
 export const AnswerType = 'Answer';

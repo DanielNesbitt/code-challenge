@@ -31,7 +31,7 @@ suspend fun WebSocketServerSession.createConnection(username: String) = actor<Re
         for (msg in channel) {
             // TODO Business logic
             when (msg) {
-                is RequestQuestions -> {
+                is RequestQuestion -> {
                     current = getAnswerSet(userId, msg.questionId)
                     current?.let { channel.send(getQuestion(msg.questionId) as ReduxAction) }
                 }
