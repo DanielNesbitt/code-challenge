@@ -1,8 +1,9 @@
 import React from "react";
-import {DetailsList, IColumn, Link, SelectionMode, Stack} from "office-ui-fabric-react";
-import {questionsSelector} from "./HomeModule";
+import {Link} from "react-router-dom";
+import {DetailsList, IColumn, SelectionMode, Stack} from "office-ui-fabric-react";
 import {useTypedSelector} from "../../state/Store";
 import {QuestionEntry} from "../../state/ServerRPC";
+import {questionsSelector} from "./HomeModule";
 
 const columns: IColumn[] = [
     {
@@ -15,13 +16,14 @@ const columns: IColumn[] = [
         name: 'Question',
         onRender: (item) => {
             const question = item as QuestionEntry;
-            return <Link href={`/question/${question.questionId}`}>{question.title}</Link>
+            return <Link to={`/question/${question.questionId}`}>{question.title}</Link>
         }
     } as IColumn
 ];
 
 export const Home: React.FC = () => {
     const questions = useTypedSelector(questionsSelector);
+
     return <Stack horizontal horizontalAlign="center" className="ms-depth-8" style={{margin: "20px"}}>
         <div style={{width: "100%", padding: "10px"}}>
             {questions ?

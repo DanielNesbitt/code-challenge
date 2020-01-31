@@ -33,6 +33,11 @@ import kotlin.collections.set
 
 fun main(args: Array<String>) {
     DB.initialize()
+
+    // init
+    newUser("daniel", "daniel")
+    newUser("alice", "alice")
+
     Json.initializeMapper()
     io.ktor.server.netty.EngineMain.main(args)
 }
@@ -84,10 +89,6 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
         }
     }
 
-    // init
-    newUser("daniel", "daniel")
-    newUser("alice", "alice")
-
     routing {
         get("/") {
             call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
@@ -129,6 +130,8 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
                 if (principal != null) {
                     call.sessions.set(USER_SESSION, UserSession(principal.name))
                     call.respond(HttpStatusCode.OK, principal.name)
+                } else {
+                    call.respond(HttpStatusCode.Unauthorized)
                 }
             }
 

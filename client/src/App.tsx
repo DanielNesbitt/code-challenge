@@ -13,6 +13,7 @@ import {Home} from "./routes/Home/Home";
 import {questionSelector} from "./routes/Question/QuestionModule";
 import {QuestionView} from "./routes/Question/QuestionView";
 import "./App.css";
+import {SocketStatus, socketStatusSelector} from "./state/SocketModule";
 
 const history = createBrowserHistory();
 
@@ -46,6 +47,13 @@ const AppView: React.FC = () => {
     const [loaded, setLoaded] = useState(false);
     const dispatch = useDispatch();
 
+    const location = useLocation();
+    const question = useTypedSelector(questionSelector);
+    const items = createBreadCrumb(location, question);
+
+    const connected = useTypedSelector(socketStatusSelector) === SocketStatus.Connected;
+    const user = useTypedSelector(userSelector);
+
     useEffect(() => {
         axios("/api/user").then(response => {
             if (!!response.data) {
@@ -55,16 +63,11 @@ const AppView: React.FC = () => {
         });
     }, [dispatch]);
 
-    const location = useLocation();
-    const question = useTypedSelector(questionSelector);
-    const items = createBreadCrumb(location, question);
-
-    const user = useTypedSelector(userSelector);
     const Body = !!user ? <Routing/> : <Login/>;
     return (
         <div className="App" style={{padding: "20px"}}>
             {user ? <Breadcrumb items={items} style={{padding: "0px 0px 10px 0px"}}/> : null}
-            {loaded ? Body : <PageSpinner/>}
+            {loaded && connected ? Body : <PageSpinner/>}
         </div>
     );
 };
