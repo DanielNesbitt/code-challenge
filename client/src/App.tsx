@@ -67,7 +67,7 @@ const AppView: React.FC = () => {
     return (
         <div className="App" style={{padding: "20px"}}>
             {user ? <Breadcrumb items={items} style={{padding: "0px 0px 10px 0px"}}/> : null}
-            {loaded && connected ? Body : <PageSpinner/>}
+            {!loaded || (!!user && !connected) ? <PageSpinner/> : Body}
         </div>
     );
 };

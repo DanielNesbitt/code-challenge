@@ -4,10 +4,8 @@ package com.genedata.ws
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.genedata.messages.*
-import com.genedata.models.AnswerSet
-import com.genedata.models.getAnswerSet
-import com.genedata.models.getQuestion
 import com.genedata.models.getUser
+import com.genedata.questions.Questions
 import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.readText
 import io.ktor.http.cio.websocket.send
@@ -23,17 +21,13 @@ import kotlinx.coroutines.withContext
 suspend fun WebSocketServerSession.createConnection(username: String) = actor<ReduxAction> {
     val user = getUser(username)
     if (user == null) {
-        // close
+        close(RuntimeException("No user for ws connection."))
     } else {
-        send(dummyQuestions())
-        val userId = user.id
-        var current: AnswerSet? = null
+        send(Questions.list())
         for (msg in channel) {
-            // TODO Business logic
             when (msg) {
                 is RequestQuestion -> {
-                    current = getAnswerSet(userId, msg.questionId)
-                    current?.let { channel.send(getQuestion(msg.questionId) as ReduxAction) }
+                    send(Questions.values()[msg.questionId.toInt()].toQuestion())
                 }
                 is Answer -> println(msg.questionId)
             }
@@ -66,10 +60,3 @@ private suspend fun fromJson(value: String): SocketAction {
             .readValue(value, SocketAction::class.java)
     }
 }
-
-private fun dummyQuestions() = QuestionsResponse(listOf(
-    QuestionEntry(0, "The first question"),
-    QuestionEntry(1, "The second question"),
-    QuestionEntry(2, "The third question")
-))
-

@@ -1,7 +1,6 @@
 package com.genedata.models
 
 import com.genedata.messages.Answer
-import com.genedata.messages.Question
 import com.genedata.messages.QuestionEntry
 import com.genedata.messages.QuestionsResponse
 import org.jetbrains.exposed.sql.*
@@ -60,13 +59,6 @@ fun submitAnswer(userId: Long, submitted: Answer, current: AnswerSet) {
     }
 }
 
-fun getQuestion(questionId: Long): Question? {
-    return transaction {
-        Questions.select { Questions.id eq questionId }
-            .map { Question(it[Questions.id], it[Questions.title], it[Questions.code]) }
-            .firstOrNull()
-    }
-}
 
 fun listQuestions(): QuestionsResponse {
     return transaction {

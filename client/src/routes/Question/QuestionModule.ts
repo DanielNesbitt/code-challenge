@@ -36,7 +36,7 @@ What is the output of this function given foo = 1, bar = 2, and baz = 3?
 
 export const QuestionModule: ReduxModule<State, Actions> = {
     name: NAME,
-    reducer: (state: State = { question: defaultQuestion }, action: Actions) => {
+    reducer: (state: State = { question: undefined }, action: Actions) => {
         switch (action.type) {
             case QuestionType: {
                 return {
