@@ -113,7 +113,7 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
                     throw RuntimeException("Empty user name or password not allowed.")
                 }
                 val newUser = newUser(name, pwd)
-                call.respondText("User ${newUser} created.")
+                call.respondText("User $newUser created.")
             } catch (th: Throwable) {
                 call.respond(HttpStatusCode.BadRequest, th.message ?: "")
             }
