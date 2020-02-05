@@ -5,6 +5,7 @@ import {createBrowserHistory, Location} from "history";
 import axios from "axios";
 import {Breadcrumb, IBreadcrumbItem} from "office-ui-fabric-react";
 import {store, useTypedSelector} from "./state/Store";
+import {SocketStatus, socketStatusSelector} from "./state/SocketModule";
 import {Question} from "./state/ServerRPC";
 import {PageSpinner} from "./components/PageSpinner";
 import {loginSuccessfulAction, userSelector} from "./routes/Login/LoginModule";
@@ -13,7 +14,6 @@ import {Home} from "./routes/Home/Home";
 import {questionSelector} from "./routes/Question/QuestionModule";
 import {QuestionView} from "./routes/Question/QuestionView";
 import "./App.css";
-import {SocketStatus, socketStatusSelector} from "./state/SocketModule";
 
 const history = createBrowserHistory();
 
