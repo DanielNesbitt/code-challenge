@@ -4,7 +4,10 @@ import com.genedata.messages.QuestionEntry
 import com.genedata.messages.QuestionsResponse
 import com.genedata.models.DB
 import com.genedata.models.User
+import com.genedata.questions.algorithms.LongestValidParentheses
 import com.genedata.questions.algorithms.MedianOfTwoSortedArrays
+
+private typealias QuestionMessage = com.genedata.messages.Question
 
 /**
  * @author Daniel Nesbitt
@@ -13,6 +16,7 @@ import com.genedata.questions.algorithms.MedianOfTwoSortedArrays
 enum class Questions(private val question: Question) : Question {
 
     MEDIAN_OF_TWO_SORTED_ARRAYS(MedianOfTwoSortedArrays()),
+    LONGEST_VALID_PARENS(LongestValidParentheses()),
     ;
 
     override fun title(): String {
@@ -27,15 +31,19 @@ enum class Questions(private val question: Question) : Question {
         return question.validateAnswer(answer)
     }
 
-    fun toQuestion(): com.genedata.messages.Question {
-        return com.genedata.messages.Question(ordinal.toLong(), title(), text())
-    }
+    fun toQuestion(): QuestionMessage = QuestionMessage(ordinal.toLong(), title(), text())
 
     companion object {
         fun list(user: User): QuestionsResponse {
             val answers = DB.queryAnswers(user.id)
             return QuestionsResponse(values()
-                .mapIndexed { index, value -> QuestionEntry(index.toLong(), value.title(), answers.getOrDefault(index.toLong(), false)) }
+                .mapIndexed { index, value ->
+                    QuestionEntry(
+                        index.toLong(),
+                        value.title(),
+                        answers.getOrDefault(index.toLong(), false)
+                    )
+                }
             )
         }
 
@@ -45,5 +53,4 @@ enum class Questions(private val question: Question) : Question {
             return get(id).validateAnswer(answer)
         }
     }
-
 }

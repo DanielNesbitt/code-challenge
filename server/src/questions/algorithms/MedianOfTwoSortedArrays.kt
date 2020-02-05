@@ -1,14 +1,16 @@
 package com.genedata.questions.algorithms
 
+import com.genedata.questions.NeedsWorks
 import com.genedata.questions.Question
 
 /**
  * @author Daniel Nesbitt
  */
+@NeedsWorks
 class MedianOfTwoSortedArrays: Question {
 
     override fun title(): String {
-        return "Leetcode Hard Arrays"
+        return "Algorithms: Arrays"
     }
 
     override fun text(): String {
