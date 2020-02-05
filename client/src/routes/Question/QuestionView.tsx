@@ -47,6 +47,7 @@ export const QuestionView: React.FC = () => {
 
     const id = !!idFromRouter ? parseInt(idFromRouter) : NaN;
     const questionIsLoaded = !!question && question.questionId === id;
+    const correct = !!result && result.correct;
 
     useEffect(() => {
         if (!questionIsLoaded) {
@@ -65,9 +66,8 @@ export const QuestionView: React.FC = () => {
         if (!!result && correct) {
             setAnswer(result.answer);
         }
-    }, [result, answer, waiting]);
+    }, [result, answer, waiting, correct]);
 
-    const correct = !!result && result.correct;
     const resultIcon = !result ? null : !correct ? badAnswer : goodAnswer;
     const renderLabel: IRenderFunction<ITextFieldProps> = (props, defaultRender) => {
         return (
