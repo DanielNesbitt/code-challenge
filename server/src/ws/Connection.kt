@@ -4,6 +4,8 @@ package com.genedata.ws
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.genedata.messages.*
+import com.genedata.models.DB
+import com.genedata.models.User
 import com.genedata.models.getUser
 import com.genedata.questions.Questions
 import io.ktor.http.cio.websocket.Frame
@@ -27,12 +29,17 @@ suspend fun WebSocketServerSession.createConnection(username: String) = actor<Re
         for (msg in channel) {
             when (msg) {
                 is RequestQuestion -> {
-                    send(Questions.values()[msg.questionId.toInt()].toQuestion())
+                    send(Questions.get(msg.questionId).toQuestion())
                 }
-                is Answer -> println(msg.questionId)
+                is Answer -> answer(msg, user)
             }
         }
     }
+}
+
+suspend fun WebSocketServerSession.answer(action: Answer, user: User) {
+    val result = DB.submitAnswer(action, user.id)
+    send(AnswerResult(action.questionId, result))
 }
 
 suspend fun WebSocketServerSession.connect(user: String, manager: SendChannel<ConnectionManagerMsg>) {

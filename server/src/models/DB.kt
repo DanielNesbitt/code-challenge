@@ -1,5 +1,7 @@
 package com.genedata.models
 
+import com.genedata.messages.Answer
+import com.genedata.questions.Questions
 import com.genedata.session.hashPassword
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -15,6 +17,14 @@ object Users : Table() {
     val passwordHash = varchar("passwordHash", 120)
 }
 
+object Answers : Table() {
+    val id = long("answer_id").autoIncrement().primaryKey().uniqueIndex()
+    val groupId = (long("group_id") references Users.id)
+    val questionId = long("questiong_id")
+    val text = varchar("answer", 2000)
+    val correct = bool("correct")
+}
+
 data class User(val id: Long, val name: String, val passwordHash: String) {
     fun validatePassword(password: String): Boolean {
         return BCrypt.checkpw(password, passwordHash)
@@ -22,17 +32,30 @@ data class User(val id: Long, val name: String, val passwordHash: String) {
 }
 
 object DB {
+
     fun initialize() {
         Database.connect("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", driver = "org.h2.Driver")
         transaction {
-            SchemaUtils.create(Users)
+            SchemaUtils.create(Users, Answers)
         }
     }
+
+    fun submitAnswer(ans: Answer, group: Long): Boolean {
+        return transaction {
+            Answers.insert {
+                it[groupId] = group
+                it[questionId] = ans.questionId
+                it[text] = ans.answer
+                it[correct] = Questions.validate(ans.questionId, ans.answer)
+            } get Answers.correct
+        }
+    }
+
 }
 
 fun newUser(newUserName: String, newUserPwd: String): String {
     return transaction {
-        if (Users.slice(Users.name).selectAll().map{ it[Users.name] }.toSet().contains(newUserName)) {
+        if (Users.slice(Users.name).selectAll().map { it[Users.name] }.toSet().contains(newUserName)) {
             throw RuntimeException("User name ${newUserName} already in use.")
         }
         val pass = hashPassword(newUserPwd)

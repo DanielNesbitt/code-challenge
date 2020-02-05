@@ -3,9 +3,10 @@ package com.genedata.models
 import com.genedata.messages.Answer
 import com.genedata.messages.QuestionEntry
 import com.genedata.messages.QuestionsResponse
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
-import kotlin.random.Random
 
 /**
  * @author Alice Li
@@ -20,31 +21,12 @@ object Questions : Table() {
     val code = Questions.varchar("code", 500)
 }
 
-object Answers : Table() {
-    val id = Answers.long("answer_id").autoIncrement().primaryKey().uniqueIndex()
-    val question = Answers.long("question_id").uniqueIndex()
-    val input = Answers.varchar("input", 500)
-    val output = Answers.varchar("output", 500)
-}
-
 data class AnswerSet(val id: Long, val question: Long, val input: String, val output: String)
 
 object Scores : Table() {
     val user = long("user_id").uniqueIndex()
     val answer = long("answer_id").uniqueIndex()
     val score = integer("score")
-}
-
-fun getAnswerSet(userId: Long, question: Long): AnswerSet? {
-    return transaction {
-        val previousAnswers = Scores.slice(Scores.answer)
-            .select { Scores.user eq userId }
-            .map { it[Scores.answer] }
-        val availableAnswers = Answers.select { Answers.question eq question }
-            .andWhere { Answers.id notInList previousAnswers }
-            .map { AnswerSet(it[Answers.id], it[Answers.question], it[Answers.input], it[Answers.output]) }
-        if (availableAnswers.isNotEmpty()) availableAnswers[Random.nextInt(0, availableAnswers.size)] else null
-    }
 }
 
 fun submitAnswer(userId: Long, submitted: Answer, current: AnswerSet) {

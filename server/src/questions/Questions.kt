@@ -34,6 +34,12 @@ enum class Questions(private val question: Question) : Question {
                 .mapIndexed { index, value -> QuestionEntry(index.toLong(), value.title()) }
             )
         }
+
+        fun get(id: Long): Questions = values()[id.toInt()]
+
+        fun validate(id: Long, answer: String): Boolean {
+            return get(id).validateAnswer(answer)
+        }
     }
 
 }
