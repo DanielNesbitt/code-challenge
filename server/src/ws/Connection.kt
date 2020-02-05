@@ -16,10 +16,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.actor
 import kotlinx.coroutines.withContext
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * @author Daniel Nesbitt
  */
+private val logger: Logger = LoggerFactory.getLogger("ConnectionHandler")
 
 suspend fun WebSocketServerSession.connect(user: String, manager: SendChannel<ConnectionManagerMsg>) {
     manager.send(Connect(user, this))
@@ -31,7 +34,7 @@ suspend fun WebSocketServerSession.connect(user: String, manager: SendChannel<Co
                 is Frame.Text -> connection.send(fromJson(msg.readText()))
             }
         } catch (th: Throwable) {
-            th.printStackTrace()
+            logger.error("Failed parse websocket frame into JSON.", th)
         }
     }
 }
