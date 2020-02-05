@@ -7,9 +7,12 @@ type CodeHighlighterProps = {
     value: string,
     language?: string
 }
-const CodeHighlighter: React.FC<CodeHighlighterProps> = ({value, language}) => (
-    <SyntaxHighlighter language={language} style={tomorrow} showLineNumbers>{value}</SyntaxHighlighter>
-);
+const CodeHighlighter: React.FC<CodeHighlighterProps> = ({value, language}) => {
+    if (!value) {
+        return null;
+    }
+    return <SyntaxHighlighter language={language} style={tomorrow} showLineNumbers>{value}</SyntaxHighlighter>;
+};
 
 export type MarkdownViewProps = { markdown: string }
 
