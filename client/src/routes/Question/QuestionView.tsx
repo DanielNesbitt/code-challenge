@@ -1,11 +1,20 @@
 import React, {useEffect, useState} from "react";
 import {useDispatch} from "react-redux";
 import {useParams} from "react-router";
-import {Label, MessageBar, MessageBarType, PrimaryButton, Stack, TextField} from "office-ui-fabric-react";
+import {
+    ITextFieldProps,
+    Label,
+    MessageBar,
+    MessageBarType,
+    PrimaryButton,
+    Stack,
+    TextField,
+    IRenderFunction, Icon
+} from "office-ui-fabric-react";
 import {useTypedSelector} from "../../state/Store";
 import {createAnswerAction, createRequestQuestionAction} from "../../state/ServerRPC";
 import {PageSpinner} from "../../components/PageSpinner";
-import {questionSelector} from "./QuestionModule";
+import {questionSelector, resultSelector} from "./QuestionModule";
 import {MarkdownView} from "../../components/MarkdownView";
 import {fieldInput} from "../../util/EventUtils";
 import {defaultChildGap} from "../../util/StackUtils";
@@ -19,16 +28,20 @@ const NotFoundError: React.FC<NotFoundProps> = ({id}) => (
     </MessageBar>
 );
 
+const goodAnswer = <Icon iconName={"Checkmark"} styles={{root: {marginBottom: -3, color: "green"}}}/>;
+const badAnswer = <Icon iconName={"Cancel"} styles={{root: {marginBottom: -3, color: "red"}}}/>;
 
 export const QuestionView: React.FC = () => {
     const question = useTypedSelector(questionSelector);
-    const { id: idFromRouter } = useParams<QuestionRouteParams>();
+    const result = useTypedSelector(resultSelector);
+    const {id: idFromRouter} = useParams<QuestionRouteParams>();
     const [answer, setAnswer] = useState("");
+    const [waiting, setWaiting] = useState(false);
     const [failed, setFailed] = useState(false);
 
     const dispatch = useDispatch();
     const dispatchAnswer = () => {
-        // TODO Prevent multiple dispatch?
+        setWaiting(true);
         if (question) {
             dispatch(createAnswerAction({answer, questionId: question.questionId}));
         }
@@ -47,6 +60,21 @@ export const QuestionView: React.FC = () => {
         }
     }, [dispatch, questionIsLoaded, id]);
 
+    useEffect(() => {
+        if (!!result && waiting) {
+            setWaiting(answer !== result.answer);
+        }
+    }, [result, answer, waiting]);
+
+    const resultIcon = result && result.correct ? badAnswer : goodAnswer;
+    const renderLabel: IRenderFunction<ITextFieldProps> = (props, defaultRender) => {
+        return (
+            <Stack horizontal verticalAlign="center" tokens={{childrenGap: 6}}>
+                <span>{defaultRender!(props)}</span>
+                {!result ? null : resultIcon}
+            </Stack>
+        );
+    };
 
     return <Stack className="ms-depth-8" style={{padding: "20px"}} tokens={defaultChildGap}>
         {failed && idFromRouter ? <NotFoundError id={idFromRouter}/> : null}
@@ -57,7 +85,7 @@ export const QuestionView: React.FC = () => {
                 : <PageSpinner/>
             }
         </div>
-        <TextField label="Answer" value={answer} onChange={fieldInput(setAnswer)}/>
-        <PrimaryButton text="Submit" onClick={dispatchAnswer}/>
+        <TextField label="Answer" value={answer} onRenderLabel={renderLabel} onChange={fieldInput(setAnswer)}/>
+        <PrimaryButton text="Submit" disabled={waiting} onClick={dispatchAnswer}/>
     </Stack>;
 };

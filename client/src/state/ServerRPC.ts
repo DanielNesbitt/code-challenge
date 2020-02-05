@@ -13,21 +13,16 @@ export interface QuestionEntry {
 }
 
 export const QuestionsResponseType = 'QuestionsResponse';
-
 export interface QuestionsResponse {
     questions: QuestionEntry[];
 }
-
 export type QuestionsResponseAction = QuestionsResponse & Action<typeof QuestionsResponseType>;
 
 export const RequestQuestionType = 'RequestQuestion';
-
 export interface RequestQuestion {
     questionId: number;
 }
-
 export type RequestQuestionAction = RequestQuestion & Action<typeof RequestQuestionType>;
-
 export function createRequestQuestionAction(arg: RequestQuestion): RequestQuestionAction & SocketAction {
     return {
         ...arg,
@@ -39,13 +34,11 @@ export function createRequestQuestionAction(arg: RequestQuestion): RequestQuesti
 }
 
 export const QuestionType = 'Question';
-
 export interface Question {
     questionId: number;
     text: string;
     title: string;
 }
-
 export type QuestionAction = Question & Action<typeof QuestionType>;
 
 export const AnswerType = 'Answer';
@@ -66,6 +59,7 @@ export function createAnswerAction(arg: Answer): AnswerAction & SocketAction {
 
 export const AnswerResultType = 'AnswerResult';
 export interface AnswerResult {
+    answer: string;
     correct: boolean;
     questionId: number;
 }

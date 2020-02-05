@@ -73,6 +73,7 @@ data class Answer(
 
 data class AnswerResult(
     val questionId: Long,
+    val answer: String,
     val correct: Boolean
 ) : ReduxAction
 

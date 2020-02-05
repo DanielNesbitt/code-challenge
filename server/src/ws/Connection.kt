@@ -39,7 +39,7 @@ suspend fun WebSocketServerSession.createConnection(username: String) = actor<Re
 
 suspend fun WebSocketServerSession.answer(action: Answer, user: User) {
     val result = DB.submitAnswer(action, user.id)
-    send(AnswerResult(action.questionId, result))
+    send(AnswerResult(action.questionId, action.answer, result))
 }
 
 suspend fun WebSocketServerSession.connect(user: String, manager: SendChannel<ConnectionManagerMsg>) {
