@@ -47,7 +47,8 @@ export const QuestionView: React.FC = () => {
 
     const id = !!idFromRouter ? parseInt(idFromRouter) : NaN;
     const questionIsLoaded = !!question && question.questionId === id;
-    const correct = !!result && result.correct;
+    const resultIsLoaded = questionIsLoaded && !!result && result.questionId === id;
+    const correct = resultIsLoaded && result!.correct;
 
     useEffect(() => {
         if (!questionIsLoaded) {
@@ -68,7 +69,7 @@ export const QuestionView: React.FC = () => {
         }
     }, [result, answer, waiting, correct]);
 
-    const resultIcon = !result ? null : !correct ? badAnswer : goodAnswer;
+    const resultIcon = !resultIsLoaded ? null : !correct ? badAnswer : goodAnswer;
     const renderLabel: IRenderFunction<ITextFieldProps> = (props, defaultRender) => {
         return (
             <Stack horizontal verticalAlign="center" tokens={{childrenGap: 6}}>
