@@ -25,7 +25,7 @@ suspend fun WebSocketServerSession.createConnection(username: String) = actor<Re
     if (user == null) {
         close(RuntimeException("No user for ws connection."))
     } else {
-        send(Questions.list())
+        send(Questions.list(user))
         for (msg in channel) {
             when (msg) {
                 is RequestQuestion -> {

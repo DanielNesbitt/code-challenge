@@ -2,11 +2,14 @@ package com.genedata.questions
 
 import com.genedata.messages.QuestionEntry
 import com.genedata.messages.QuestionsResponse
+import com.genedata.models.DB
+import com.genedata.models.User
 import com.genedata.questions.algorithms.MedianOfTwoSortedArrays
 
 /**
  * @author Daniel Nesbitt
  */
+@Suppress("unused") // Used via enum values
 enum class Questions(private val question: Question) : Question {
 
     MEDIAN_OF_TWO_SORTED_ARRAYS(MedianOfTwoSortedArrays()),
@@ -29,9 +32,10 @@ enum class Questions(private val question: Question) : Question {
     }
 
     companion object {
-        fun list(): QuestionsResponse {
+        fun list(user: User): QuestionsResponse {
+            val answers = DB.queryAnswers(user.id)
             return QuestionsResponse(values()
-                .mapIndexed { index, value -> QuestionEntry(index.toLong(), value.title()) }
+                .mapIndexed { index, value -> QuestionEntry(index.toLong(), value.title(), answers.getOrDefault(index.toLong(), false)) }
             )
         }
 

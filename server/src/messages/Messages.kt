@@ -49,7 +49,8 @@ interface SocketAction : ReduxAction
 
 data class QuestionEntry(
     val questionId: Long,
-    val title: String
+    val title: String,
+    val correct: Boolean
 )
 
 data class QuestionsResponse(

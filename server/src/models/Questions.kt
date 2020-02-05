@@ -1,11 +1,8 @@
 package com.genedata.models
 
 import com.genedata.messages.Answer
-import com.genedata.messages.QuestionEntry
-import com.genedata.messages.QuestionsResponse
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
 /**
@@ -38,14 +35,5 @@ fun submitAnswer(userId: Long, submitted: Answer, current: AnswerSet) {
                 it[score] = if (current.output == submitted.answer) CORRECT_POINTS else INCORRECT_POINTS
             }
         }
-    }
-}
-
-
-fun listQuestions(): QuestionsResponse {
-    return transaction {
-        QuestionsResponse(Questions.selectAll()
-            .map{QuestionEntry(it[Questions.id], it[Questions.title])})
-
     }
 }

@@ -40,6 +40,13 @@ object DB {
         }
     }
 
+    fun queryAnswers(group: Long): Map<Long, Boolean> {
+        return transaction {
+            Answers.select { Answers.groupId eq group and Answers.correct.eq(true) }.toList()
+                .map { it[Answers.questionId] to it[Answers.correct] }.toMap()
+        }
+    }
+
     fun submitAnswer(ans: Answer, group: Long): Boolean {
         return transaction {
             Answers.insert {

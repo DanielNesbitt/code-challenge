@@ -8,6 +8,7 @@ export type SocketAction = {
 }
 
 export interface QuestionEntry {
+    correct: boolean;
     questionId: number;
     title: string;
 }

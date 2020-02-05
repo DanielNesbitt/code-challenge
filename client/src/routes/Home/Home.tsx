@@ -4,12 +4,24 @@ import {DetailsList, IColumn, SelectionMode, Stack} from "office-ui-fabric-react
 import {useTypedSelector} from "../../state/Store";
 import {QuestionEntry} from "../../state/ServerRPC";
 import {questionsSelector} from "./HomeModule";
+import {goodAnswer} from "../../components/Icons";
+
+const answered = (
+    <Stack horizontal horizontalAlign="center">
+        {goodAnswer}
+    </Stack>
+);
 
 const columns: IColumn[] = [
     {
         key: 'question_state',
         name: 'Answered',
-        maxWidth: 100,
+        minWidth: 63,
+        maxWidth: 63,
+        onRender: (item) => {
+            const question = item as QuestionEntry;
+            return question.correct ? answered : null;
+        }
     } as IColumn,
     {
         key: 'question',

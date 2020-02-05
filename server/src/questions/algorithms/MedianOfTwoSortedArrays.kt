@@ -61,7 +61,7 @@ class MedianOfTwoSortedArrays: Question {
     }
 
     override fun validateAnswer(answer: String): Boolean {
-        return false
+        return true
     }
 
 }

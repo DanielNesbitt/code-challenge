@@ -9,15 +9,16 @@ import {
     PrimaryButton,
     Stack,
     TextField,
-    IRenderFunction, Icon
+    IRenderFunction
 } from "office-ui-fabric-react";
 import {useTypedSelector} from "../../state/Store";
 import {createAnswerAction, createRequestQuestionAction} from "../../state/ServerRPC";
 import {PageSpinner} from "../../components/PageSpinner";
-import {questionSelector, resultSelector} from "./QuestionModule";
+import {badAnswer, goodAnswer} from "../../components/Icons";
 import {MarkdownView} from "../../components/MarkdownView";
 import {fieldInput} from "../../util/EventUtils";
 import {defaultChildGap} from "../../util/StackUtils";
+import {questionSelector, resultSelector} from "./QuestionModule";
 
 type QuestionRouteParams = { id?: string; }
 
@@ -27,9 +28,6 @@ const NotFoundError: React.FC<NotFoundProps> = ({id}) => (
         Question not found for id: {id}
     </MessageBar>
 );
-
-const goodAnswer = <Icon iconName={"Checkmark"} styles={{root: {marginBottom: -3, color: "green"}}}/>;
-const badAnswer = <Icon iconName={"Cancel"} styles={{root: {marginBottom: -3, color: "red"}}}/>;
 
 export const QuestionView: React.FC = () => {
     const question = useTypedSelector(questionSelector);
@@ -66,12 +64,12 @@ export const QuestionView: React.FC = () => {
         }
     }, [result, answer, waiting]);
 
-    const resultIcon = result && result.correct ? badAnswer : goodAnswer;
+    const resultIcon = !result ? null : !result.correct ? badAnswer : goodAnswer;
     const renderLabel: IRenderFunction<ITextFieldProps> = (props, defaultRender) => {
         return (
             <Stack horizontal verticalAlign="center" tokens={{childrenGap: 6}}>
                 <span>{defaultRender!(props)}</span>
-                {!result ? null : resultIcon}
+                {resultIcon}
             </Stack>
         );
     };
