@@ -20,38 +20,6 @@ import kotlinx.coroutines.withContext
 /**
  * @author Daniel Nesbitt
  */
-suspend fun WebSocketServerSession.createConnection(username: String) = actor<ReduxAction> {
-    val user = getUser(username)
-    if (user == null) {
-        close(RuntimeException("No user for ws connection."))
-    } else {
-        send(Questions.list(user))
-        for (msg in channel) {
-            when (msg) {
-                is RequestQuestion -> {
-                    question(msg, user)
-                }
-                is Answer -> answer(msg, user)
-            }
-        }
-    }
-}
-
-suspend fun WebSocketServerSession.question(msg: RequestQuestion, user: User) {
-    val correctAnswer = DB.queryAnswer(user.id, msg.questionId)
-    send(Questions.get(msg.questionId).toQuestion())
-    if (correctAnswer != null) {
-        send(correctAnswer)
-    }
-}
-
-suspend fun WebSocketServerSession.answer(action: Answer, user: User) {
-    val result = DB.submitAnswer(action, user.id)
-    send(AnswerResult(action.questionId, action.answer, result))
-    if (result) {
-        send(Questions.list(user))
-    }
-}
 
 suspend fun WebSocketServerSession.connect(user: String, manager: SendChannel<ConnectionManagerMsg>) {
     manager.send(Connect(user, this))
@@ -68,7 +36,44 @@ suspend fun WebSocketServerSession.connect(user: String, manager: SendChannel<Co
     }
 }
 
-suspend fun WebSocketServerSession.send(action: ReduxAction) {
+private suspend fun WebSocketServerSession.createConnection(username: String) = actor<ReduxAction> {
+    val user = getUser(username)
+    if (user == null) {
+        close(RuntimeException("No user for ws connection."))
+    } else {
+        with(ConnectionScope(user, this@createConnection)) {
+            send(Questions.list(user))
+            for (msg in channel) {
+                when (msg) {
+                    is RequestQuestion -> {
+                        question(msg)
+                    }
+                    is Answer -> answer(msg)
+                }
+            }
+        }
+    }
+}
+
+private class ConnectionScope(val user: User, private val delegate: WebSocketServerSession) : WebSocketServerSession by delegate
+
+private suspend fun ConnectionScope.question(msg: RequestQuestion) {
+    val correctAnswer = DB.queryAnswer(user.id, msg.questionId)
+    send(Questions.get(msg.questionId).toQuestion())
+    if (correctAnswer != null) {
+        send(correctAnswer)
+    }
+}
+
+private suspend fun ConnectionScope.answer(action: Answer) {
+    val result = DB.submitAnswer(action, user.id)
+    send(AnswerResult(action.questionId, action.answer, result))
+    if (result) {
+        send(Questions.list(user))
+    }
+}
+
+private suspend fun ConnectionScope.send(action: ReduxAction) {
     send(Json.toJsonString(action))
 }
 
