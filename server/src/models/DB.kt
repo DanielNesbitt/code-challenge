@@ -1,6 +1,7 @@
 package com.genedata.models
 
 import com.genedata.messages.Answer
+import com.genedata.messages.AnswerResult
 import com.genedata.questions.Questions
 import com.genedata.session.hashPassword
 import org.jetbrains.exposed.sql.*
@@ -44,6 +45,16 @@ object DB {
         return transaction {
             Answers.select { Answers.groupId eq group and Answers.correct.eq(true) }.toList()
                 .map { it[Answers.questionId] to it[Answers.correct] }.toMap()
+        }
+    }
+
+    fun queryAnswer(group: Long, question: Long): AnswerResult? {
+        return transaction {
+            Answers.select { Answers.groupId eq group and Answers.correct.eq(true) and Answers.questionId.eq(question) }
+                .limit(1)
+                .toList()
+                .map { AnswerResult(question, it[Answers.text], it[Answers.correct]) }
+                .singleOrNull()
         }
     }
 

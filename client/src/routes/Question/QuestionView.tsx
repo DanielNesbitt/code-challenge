@@ -62,9 +62,13 @@ export const QuestionView: React.FC = () => {
         if (!!result && waiting) {
             setWaiting(answer !== result.answer);
         }
+        if (!!result && correct) {
+            setAnswer(result.answer);
+        }
     }, [result, answer, waiting]);
 
-    const resultIcon = !result ? null : !result.correct ? badAnswer : goodAnswer;
+    const correct = !!result && result.correct;
+    const resultIcon = !result ? null : !correct ? badAnswer : goodAnswer;
     const renderLabel: IRenderFunction<ITextFieldProps> = (props, defaultRender) => {
         return (
             <Stack horizontal verticalAlign="center" tokens={{childrenGap: 6}}>
@@ -74,7 +78,7 @@ export const QuestionView: React.FC = () => {
         );
     };
 
-    return <Stack className="ms-depth-8" style={{padding: "20px"}} tokens={defaultChildGap}>
+    return <Stack className="ms-depth-8" style={{padding: "20px", marginBottom: "20px"}} tokens={defaultChildGap}>
         {failed && idFromRouter ? <NotFoundError id={idFromRouter}/> : null}
         <div style={{width: "100%"}}>
             <Label>Question</Label>
@@ -83,7 +87,7 @@ export const QuestionView: React.FC = () => {
                 : <PageSpinner/>
             }
         </div>
-        <TextField label="Answer" value={answer} onRenderLabel={renderLabel} onChange={fieldInput(setAnswer)}/>
-        <PrimaryButton text="Submit" disabled={waiting} onClick={dispatchAnswer}/>
+        <TextField label="Answer" value={answer} readOnly={waiting || correct} onRenderLabel={renderLabel} onChange={fieldInput(setAnswer)}/>
+        <PrimaryButton text="Submit" disabled={waiting || correct} onClick={dispatchAnswer}/>
     </Stack>;
 };

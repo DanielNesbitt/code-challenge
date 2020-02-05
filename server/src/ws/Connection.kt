@@ -29,11 +29,19 @@ suspend fun WebSocketServerSession.createConnection(username: String) = actor<Re
         for (msg in channel) {
             when (msg) {
                 is RequestQuestion -> {
-                    send(Questions.get(msg.questionId).toQuestion())
+                    question(msg, user)
                 }
                 is Answer -> answer(msg, user)
             }
         }
+    }
+}
+
+suspend fun WebSocketServerSession.question(msg: RequestQuestion, user: User) {
+    val correctAnswer = DB.queryAnswer(user.id, msg.questionId)
+    send(Questions.get(msg.questionId).toQuestion())
+    if (correctAnswer != null) {
+        send(correctAnswer)
     }
 }
 
