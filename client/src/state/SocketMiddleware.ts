@@ -29,8 +29,8 @@ export const socketMiddleware: Middleware = (api: MiddlewareAPI<Dispatch, Applic
                 updateStatus(SocketStatus.Connected);
             };
 
-            socket.onmessage = ev => {
-                const action = JSON.parse(ev.data);
+            socket.onmessage = e => {
+                const action = JSON.parse(e.data);
                 if (action.type) {
                     api.dispatch(action);
                 }
