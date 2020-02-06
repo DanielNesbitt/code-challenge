@@ -6,6 +6,7 @@ import com.genedata.models.DB
 import com.genedata.models.User
 import com.genedata.questions.algorithms.LongestValidParentheses
 import com.genedata.questions.algorithms.MedianOfTwoSortedArrays
+import com.genedata.questions.sql.SQLWindowing
 
 private typealias QuestionMessage = com.genedata.messages.Question
 
@@ -15,8 +16,12 @@ private typealias QuestionMessage = com.genedata.messages.Question
 @Suppress("unused") // Used via enum values
 enum class Questions(private val question: Question) : Question {
 
+    // Algorithms
     MEDIAN_OF_TWO_SORTED_ARRAYS(MedianOfTwoSortedArrays()),
     LONGEST_VALID_PARENS(LongestValidParentheses()),
+
+    // SQL
+    SQL_WINDOWING(SQLWindowing())
     ;
 
     override fun title(): String {
