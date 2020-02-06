@@ -7,6 +7,8 @@ import com.genedata.models.User
 import com.genedata.questions.algorithms.LongestValidParentheses
 import com.genedata.questions.algorithms.MedianOfTwoSortedArrays
 import com.genedata.questions.sql.SQLWindowing
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 private typealias QuestionMessage = com.genedata.messages.Question
 
@@ -39,6 +41,8 @@ enum class Questions(private val question: Question) : Question {
     fun toQuestion(): QuestionMessage = QuestionMessage(ordinal.toLong(), title(), text())
 
     companion object {
+        private val logger: Logger = LoggerFactory.getLogger(Questions::class.java)
+
         fun list(user: User): QuestionsResponse {
             val answers = DB.queryAnswers(user.id)
             return QuestionsResponse(values()
@@ -55,7 +59,13 @@ enum class Questions(private val question: Question) : Question {
         fun get(id: Long): Questions = values()[id.toInt()]
 
         fun validate(id: Long, answer: String): Boolean {
-            return get(id).validateAnswer(answer)
+            return try {
+                get(id).validateAnswer(answer)
+            } catch (th: Throwable) {
+                logger.warn("Could not validate answer ($answer) for question (${id}).")
+                logger.debug("Answer validation problem.", th)
+                false
+            }
         }
     }
 }
