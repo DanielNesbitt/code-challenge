@@ -6,6 +6,7 @@ import com.genedata.models.DB
 import com.genedata.models.User
 import com.genedata.questions.algorithms.LongestValidParentheses
 import com.genedata.questions.algorithms.MedianOfTwoSortedArrays
+import com.genedata.questions.sql.SQLCommonJoin
 import com.genedata.questions.sql.SQLFlowControl
 import com.genedata.questions.sql.SQLWindowing
 import org.slf4j.Logger
@@ -24,6 +25,7 @@ enum class Questions(private val question: Question) : Question {
     LONGEST_VALID_PARENS(LongestValidParentheses()),
 
     // SQL
+    SQL_COMMON_JOIN(SQLCommonJoin()),
     SQL_WINDOWING(SQLWindowing()),
     SQL_FLOW_CONTROL(SQLFlowControl()),
     ;
