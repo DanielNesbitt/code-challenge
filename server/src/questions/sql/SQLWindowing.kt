@@ -46,10 +46,10 @@ class SQLWindowing: Question {
             from (
                 select
                     num,
-                    LEAD(num) over(order by id) as lead,
+                    LEAD(num) over (order by id) as lead,
                     LAG(num) over (order by id) as lag
                 from Numbers
-            ) num_window
+            ) nums
             where num=lead and num=lag;
             ```
             
