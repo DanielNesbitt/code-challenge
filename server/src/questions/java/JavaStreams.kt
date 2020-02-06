@@ -9,7 +9,6 @@ class JavaStreams: Question {
     override fun title(): String = "Java: Streams"
 
     override fun text(): String ="""
-        Given
         ```java
         public class Streaming {
             String find_x(List<String> input) {
@@ -31,10 +30,10 @@ class JavaStreams: Question {
         }        
         ```
         ```java
-        List<String> ss = List.of( "cac", "akk", "cuc", "aapa", "aak", "ded" );
+        List<String> ss = List.of( "akk", "cuc", "aap", "aak", "cac", "ded" );
         ```
         
-        What is the result of this function with the following input `ss`?
+        What is the result of `find_x` with the input `ss`?
     """.trimIndent()
 
     override fun validateAnswer(answer: String): Boolean {
