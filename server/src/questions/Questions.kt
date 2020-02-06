@@ -6,6 +6,7 @@ import com.genedata.models.DB
 import com.genedata.models.User
 import com.genedata.questions.algorithms.LongestValidParentheses
 import com.genedata.questions.algorithms.MedianOfTwoSortedArrays
+import com.genedata.questions.shell.ShellPositionalArguments
 import com.genedata.questions.sql.SQLCommonJoin
 import com.genedata.questions.sql.SQLFlowControl
 import com.genedata.questions.sql.SQLWindowing
@@ -28,6 +29,9 @@ enum class Questions(private val question: Question) : Question {
     SQL_COMMON_JOIN(SQLCommonJoin()),
     SQL_WINDOWING(SQLWindowing()),
     SQL_FLOW_CONTROL(SQLFlowControl()),
+
+    // Shell
+    SHELL_POS_ARGS(ShellPositionalArguments())
     ;
 
     override fun title(): String {
