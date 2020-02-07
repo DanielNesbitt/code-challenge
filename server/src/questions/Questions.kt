@@ -9,6 +9,7 @@ import com.genedata.questions.algorithms.MedianOfTwoSortedArrays
 import com.genedata.questions.java.JavaStreams
 import com.genedata.questions.java.WhatDoesItDo
 import com.genedata.questions.javascript.JSExpressions
+import com.genedata.questions.misc.HaskellFib
 import com.genedata.questions.shell.ShellPositionalArguments
 import com.genedata.questions.sql.SQLCommonJoin
 import com.genedata.questions.sql.SQLFlowControl
@@ -40,8 +41,9 @@ enum class Questions(private val question: Question) : Question {
     SQL_WINDOWING(SQLWindowing()),
     SQL_FLOW_CONTROL(SQLFlowControl()),
 
-    // Shell
-    SHELL_POS_ARGS(ShellPositionalArguments())
+    // Misc
+    SHELL_POS_ARGS(ShellPositionalArguments()),
+    HASKELL_FIB(HaskellFib())
     ;
 
     override fun title(): String {
