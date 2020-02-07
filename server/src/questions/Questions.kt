@@ -9,6 +9,7 @@ import com.genedata.questions.algorithms.MedianOfTwoSortedArrays
 import com.genedata.questions.java.JavaStreams
 import com.genedata.questions.java.WhatDoesItDo
 import com.genedata.questions.javascript.JSExpressions
+import com.genedata.questions.javascript.JSPromises
 import com.genedata.questions.misc.HaskellFib
 import com.genedata.questions.shell.ShellPositionalArguments
 import com.genedata.questions.sql.SQLCommonJoin
@@ -31,6 +32,7 @@ enum class Questions(private val question: Question) : Question {
 
     // Javascript
     JS_EXPRESSIONS(JSExpressions()),
+    JS_PROMISES(JSPromises()),
 
     // Algorithms
     MEDIAN_OF_TWO_SORTED_ARRAYS(MedianOfTwoSortedArrays()),
