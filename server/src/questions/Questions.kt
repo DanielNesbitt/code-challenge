@@ -8,6 +8,7 @@ import com.genedata.questions.algorithms.LongestValidParentheses
 import com.genedata.questions.algorithms.MedianOfTwoSortedArrays
 import com.genedata.questions.java.JavaStreams
 import com.genedata.questions.java.WhatDoesItDo
+import com.genedata.questions.javascript.JSExpressions
 import com.genedata.questions.shell.ShellPositionalArguments
 import com.genedata.questions.sql.SQLCommonJoin
 import com.genedata.questions.sql.SQLFlowControl
@@ -26,6 +27,9 @@ enum class Questions(private val question: Question) : Question {
     // Java
     JAVA_STREAMS(JavaStreams()),
     WHAT_DOES_IT_DO(WhatDoesItDo()),
+
+    // Javascript
+    JS_EXPRESSIONS(JSExpressions()),
 
     // Algorithms
     MEDIAN_OF_TWO_SORTED_ARRAYS(MedianOfTwoSortedArrays()),
