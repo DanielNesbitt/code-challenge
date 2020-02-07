@@ -4,10 +4,9 @@ import com.genedata.messages.QuestionEntry
 import com.genedata.messages.QuestionsResponse
 import com.genedata.models.DB
 import com.genedata.models.User
-import com.genedata.questions.algorithms.BinarySearch
 import com.genedata.questions.algorithms.LongestValidParentheses
 import com.genedata.questions.algorithms.MedianOfTwoSortedArrays
-import com.genedata.questions.misc.BitManipulation
+import com.genedata.questions.java.JavaStreams
 import com.genedata.questions.shell.ShellPositionalArguments
 import com.genedata.questions.sql.SQLCommonJoin
 import com.genedata.questions.sql.SQLFlowControl
@@ -23,8 +22,10 @@ private typealias QuestionMessage = com.genedata.messages.Question
 @Suppress("unused") // Used via enum values
 enum class Questions(private val question: Question) : Question {
 
+    // Java
+    JAVA_STREAMS(JavaStreams()),
+
     // Algorithms
-    BINARY_SEARCH(BinarySearch()),
     MEDIAN_OF_TWO_SORTED_ARRAYS(MedianOfTwoSortedArrays()),
     LONGEST_VALID_PARENS(LongestValidParentheses()),
 
@@ -34,10 +35,7 @@ enum class Questions(private val question: Question) : Question {
     SQL_FLOW_CONTROL(SQLFlowControl()),
 
     // Shell
-    SHELL_POS_ARGS(ShellPositionalArguments()),
-
-    // Misc
-    BIT_MANIPULATION(BitManipulation())
+    SHELL_POS_ARGS(ShellPositionalArguments())
     ;
 
     override fun title(): String {
