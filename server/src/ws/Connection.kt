@@ -35,6 +35,7 @@ suspend fun WebSocketServerSession.connect(user: String, manager: SendChannel<Co
             }
         } catch (th: Throwable) {
             logger.error("Failed parse websocket frame into JSON.", th)
+            connection.send(ErrorMessage("Failed to parse client input."))
         }
     }
 }
@@ -58,7 +59,8 @@ private suspend fun WebSocketServerSession.createConnection(username: String) = 
     }
 }
 
-private class ConnectionScope(val user: User, private val delegate: WebSocketServerSession) : WebSocketServerSession by delegate
+private class ConnectionScope(val user: User, private val delegate: WebSocketServerSession) :
+    WebSocketServerSession by delegate
 
 private suspend fun ConnectionScope.question(msg: RequestQuestion) {
     val correctAnswer = DB.queryAnswer(user.id, msg.questionId)
@@ -69,7 +71,12 @@ private suspend fun ConnectionScope.question(msg: RequestQuestion) {
 }
 
 private suspend fun ConnectionScope.answer(action: Answer) {
-    val result = DB.submitAnswer(action, user.id)
+    val result = try {
+        DB.submitAnswer(action, user.id)
+    } catch (th: Throwable) {
+        logger.error("For question ${action.questionId} failed to submit answer ${action.answer}.", th)
+        false
+    }
     send(AnswerResult(action.questionId, action.answer, result))
     if (result) {
         send(Questions.list(user))
