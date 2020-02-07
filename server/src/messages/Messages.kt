@@ -78,6 +78,10 @@ data class AnswerResult(
     val correct: Boolean
 ) : ReduxAction
 
+data class ErrorMessage(
+    val message: String
+) : ReduxAction
+
 // ===============================================
 
 val RPC_CLASSES = setOf(
@@ -85,5 +89,6 @@ val RPC_CLASSES = setOf(
     RequestQuestion::class,
     Question::class,
     Answer::class,
-    AnswerResult::class
+    AnswerResult::class,
+    ErrorMessage::class
 )
