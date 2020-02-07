@@ -65,3 +65,9 @@ export interface AnswerResult {
     questionId: number;
 }
 export type AnswerResultAction = AnswerResult & Action<typeof AnswerResultType>;
+
+export const ErrorMessageType = 'ErrorMessage';
+export interface ErrorMessage {
+    message: string;
+}
+export type ErrorMessageAction = ErrorMessage & Action<typeof ErrorMessageType>;

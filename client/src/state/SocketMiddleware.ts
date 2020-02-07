@@ -2,6 +2,7 @@ import {Action, AnyAction, Dispatch, Middleware, MiddlewareAPI} from "redux";
 import {ApplicationState} from "./State";
 import {LoginSuccessfulType} from "../routes/Login/LoginModule";
 import {SocketStatus, socketStatusAction} from "./SocketModule";
+import {ErrorMessageAction, ErrorMessageType} from "./ServerRPC";
 
 const createSocket = (): WebSocket => {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -32,6 +33,10 @@ export const socketMiddleware: Middleware = (api: MiddlewareAPI<Dispatch, Applic
             socket.onmessage = e => {
                 const action = JSON.parse(e.data);
                 if (action.type) {
+                    if (action.type == ErrorMessageType) {
+                        const ea = action as ErrorMessageAction;
+                        console.log(ea.message)
+                    }
                     api.dispatch(action);
                 }
             };
