@@ -33,7 +33,7 @@ export const socketMiddleware: Middleware = (api: MiddlewareAPI<Dispatch, Applic
             socket.onmessage = e => {
                 const action = JSON.parse(e.data);
                 if (action.type) {
-                    if (action.type == ErrorMessageType) {
+                    if (action.type === ErrorMessageType) {
                         const ea = action as ErrorMessageAction;
                         console.log(ea.message)
                     }
