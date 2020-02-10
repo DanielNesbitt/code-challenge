@@ -13,6 +13,10 @@ apply plugin: 'application'
 
 mainClassName = "io.ktor.server.netty.EngineMain"
 
+distZip {
+    archiveName baseName + '.zip'
+}
+
 repositories {
     mavenLocal()
     jcenter()
