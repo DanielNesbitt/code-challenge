@@ -22,10 +22,12 @@ import io.ktor.response.respond
 import io.ktor.response.respondText
 import io.ktor.routing.get
 import io.ktor.routing.post
+import io.ktor.routing.route
 import io.ktor.routing.routing
 import io.ktor.sessions.*
 import io.ktor.websocket.WebSockets
 import io.ktor.websocket.webSocket
+import java.io.File
 import java.security.SecureRandom
 import java.time.Duration
 import kotlin.collections.set
@@ -88,61 +90,78 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
         }
     }
 
+    install(CallLogging)
+
     routing {
-        post("/newUser") {
-            val multipart = call.receiveMultipart()
-            var name = ""
-            var pwd = ""
-            while (true) {
-                val part = multipart.readPart() ?: break
-                if (part is PartData.FormItem) {
-                    val value = part.value.trim()
-                    when (part.name) {
-                        "name" -> name = value
-                        "password" -> pwd = value
+        route("api") {
+            post("/newUser") {
+                val multipart = call.receiveMultipart()
+                var name = ""
+                var pwd = ""
+                while (true) {
+                    val part = multipart.readPart() ?: break
+                    if (part is PartData.FormItem) {
+                        val value = part.value.trim()
+                        when (part.name) {
+                            "name" -> name = value
+                            "password" -> pwd = value
+                        }
                     }
                 }
-            }
-            try {
-                if (name.isEmpty() || pwd.isEmpty()) {
-                    throw RuntimeException("Empty user name or password not allowed.")
-                }
-                val newUser = newUser(name, pwd)
-                call.respondText("User $newUser created.")
-            } catch (th: Throwable) {
-                call.respond(HttpStatusCode.BadRequest, th.message ?: "")
-            }
-        }
-
-        get("/user") {
-            val session = call.sessions.get<UserSession>()
-            call.respond(HttpStatusCode.OK, session?.user.orEmpty())
-        }
-
-        authenticate("formAuth") {
-            post("/login") {
-                val principal = call.principal<UserIdPrincipal>()
-                if (principal != null) {
-                    call.sessions.set(USER_SESSION, UserSession(principal.name))
-                    call.respond(HttpStatusCode.OK, principal.name)
-                } else {
-                    call.respond(HttpStatusCode.Unauthorized)
+                try {
+                    if (name.isEmpty() || pwd.isEmpty()) {
+                        throw RuntimeException("Empty user name or password not allowed.")
+                    }
+                    val newUser = newUser(name, pwd)
+                    call.respondText("User $newUser created.")
+                } catch (th: Throwable) {
+                    call.respond(HttpStatusCode.BadRequest, th.message ?: "")
                 }
             }
 
-            webSocket("/ws") {
+            get("/user") {
                 val session = call.sessions.get<UserSession>()
-                connect(session!!.user, cm)
+                call.respond(HttpStatusCode.OK, session?.user.orEmpty())
+            }
+
+            authenticate("formAuth") {
+                post("/login") {
+                    val principal = call.principal<UserIdPrincipal>()
+                    if (principal != null) {
+                        call.sessions.set(USER_SESSION, UserSession(principal.name))
+                        call.respond(HttpStatusCode.OK, principal.name)
+                    } else {
+                        call.respond(HttpStatusCode.Unauthorized)
+                    }
+                }
+
+                webSocket("/ws") {
+                    val session = call.sessions.get<UserSession>()
+                    connect(session!!.user, cm)
+                }
             }
         }
 
-        static("*") {
-            files("static/css")
-            files("static/js")
+        static {
+            staticRootFolder = File("client/build")
+
             file("favicon.ico")
             file("manifest.json")
-            default("index.html")
+
+            static("static") {
+                static("js") {
+                    files("static/js")
+                }
+                static("css") {
+                    files("static/css")
+                }
+            }
+
+            static("/") {
+                default("index.html")
+            }
         }
+
     }
 }
 
