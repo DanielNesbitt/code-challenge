@@ -6,7 +6,6 @@ import com.genedata.questions.Question
 /**
  * @author Alice Li
  */
-@NeedsWorks
 class BinarySearch: Question {
     override fun title(): String {
         return "Algorithms: Very Easy"
@@ -31,11 +30,15 @@ class BinarySearch: Question {
                 return -1;
             }
             ```
+        ```java
+        int[] a = new int[] { 1, 3, 6, 13, 43, 55, 57, 87 };
+        ```
+        What is the result of foo(a, 6)?
         """.trimIndent()
     }
 
     override fun validateAnswer(answer: String): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return answer === "6";
     }
 
 }

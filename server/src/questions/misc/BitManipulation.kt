@@ -6,7 +6,6 @@ import com.genedata.questions.Question
 /**
  * @author Alice Li
  */
-@NeedsWorks
 class BitManipulation: Question {
     override fun title(): String {
         return "BitManipulation"
@@ -19,11 +18,12 @@ class BitManipulation: Question {
                 return ~(a << 1 ^ (~b | b >>>1)) 
             }
             ```
+            What is the result of foo(7, 8)?
         """.trimIndent()
     }
 
     override fun validateAnswer(answer: String): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return answer === "6";
     }
 
     fun foo(a: Int, b: Int): Int {
