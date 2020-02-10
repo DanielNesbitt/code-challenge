@@ -16,6 +16,7 @@ object Users : Table() {
     val id = long("user_id").autoIncrement().primaryKey().uniqueIndex()
     val name = varchar("name", 50)
     val passwordHash = varchar("passwordHash", 120)
+    val admin = bool("admin").default(false)
 }
 
 object Answers : Table() {
@@ -35,9 +36,17 @@ data class User(val id: Long, val name: String, val passwordHash: String) {
 object DB {
 
     fun initialize() {
-        Database.connect("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", driver = "org.h2.Driver")
+        val databaseUrl = System.getenv("DATABASED_URL")
+
+        if (databaseUrl != null) {
+            val databaseUser = System.getenv("DATABASED_USER")
+            val databasePassword = System.getenv("DATABASED_PASSWORD")
+            Database.connect(databaseUrl, user = databaseUser, password = databasePassword, driver = "org.h2.Driver")
+        } else {
+            Database.connect("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", driver = "org.postgresql.Driver")
+        }
         transaction {
-            SchemaUtils.create(Users, Answers)
+            SchemaUtils.createMissingTablesAndColumns(Users, Answers)
         }
     }
 
@@ -71,7 +80,7 @@ object DB {
 
 }
 
-fun newUser(newUserName: String, newUserPwd: String): String {
+fun newUser(newUserName: String, newUserPwd: String, isAdmin: Boolean = false): String {
     return transaction {
         if (Users.slice(Users.name).selectAll().map { it[Users.name] }.toSet().contains(newUserName)) {
             throw RuntimeException("User name ${newUserName} already in use.")
@@ -80,6 +89,7 @@ fun newUser(newUserName: String, newUserPwd: String): String {
         Users.insert {
             it[name] = newUserName
             it[passwordHash] = pass
+            it[admin] = isAdmin
         } get Users.name
     }
 }
