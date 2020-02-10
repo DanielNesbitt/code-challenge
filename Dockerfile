@@ -1,7 +1,8 @@
 FROM openjdk:13
-COPY ./server/build/distributions/server.zip /usr/code_challenge
-COPY ./client/build/distributions/client.zip /usr/code_challenge
 WORKDIR /usr/code_challenge
+COPY ./server/build/distributions/server.zip .
+COPY ./client/build/distributions/client.zip .
+RUN yum install -y unzip
 RUN unzip server.zip
 RUN unzip client.zip
-ENTRYPOINT ["./bin/server"]
+ENTRYPOINT ["./server/bin/server"]

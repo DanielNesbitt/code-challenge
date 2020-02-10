@@ -1,0 +1,5 @@
+*
+
+!.dockerignore
+!client/build/distributions
+!server/build/distributions
