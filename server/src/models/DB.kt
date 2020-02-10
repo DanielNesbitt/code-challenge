@@ -22,7 +22,7 @@ object Users : Table() {
 object Answers : Table() {
     val id = long("answer_id").autoIncrement().primaryKey().uniqueIndex()
     val groupId = (long("group_id") references Users.id)
-    val questionId = long("questiong_id")
+    val questionId = long("question_id")
     val text = varchar("answer", 2000)
     val correct = bool("correct")
 }
@@ -36,11 +36,11 @@ data class User(val id: Long, val name: String, val passwordHash: String) {
 object DB {
 
     fun initialize() {
-        val databaseUrl = System.getenv("DATABASED_URL")
+        val databaseUrl = System.getenv("DATABASE_URL")
 
         if (databaseUrl != null) {
-            val databaseUser = System.getenv("DATABASED_USER")
-            val databasePassword = System.getenv("DATABASED_PASSWORD")
+            val databaseUser = System.getenv("DATABASE_USER")
+            val databasePassword = System.getenv("DATABASE_PASSWORD")
             Database.connect(databaseUrl, user = databaseUser, password = databasePassword, driver = "org.h2.Driver")
         } else {
             Database.connect("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", driver = "org.postgresql.Driver")
@@ -83,7 +83,7 @@ object DB {
 fun newUser(newUserName: String, newUserPwd: String, isAdmin: Boolean = false): String {
     return transaction {
         if (Users.slice(Users.name).selectAll().map { it[Users.name] }.toSet().contains(newUserName)) {
-            throw RuntimeException("User name ${newUserName} already in use.")
+            throw RuntimeException("User name $newUserName already in use.")
         }
         val pass = hashPassword(newUserPwd)
         Users.insert {
