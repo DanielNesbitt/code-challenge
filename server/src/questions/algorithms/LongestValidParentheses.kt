@@ -6,7 +6,6 @@ import com.genedata.questions.Question
 /**
  * @author Daniel Nesbitt
  */
-@NeedsWorks
 class LongestValidParentheses: Question {
 
     override fun title(): String {
@@ -34,15 +33,16 @@ class LongestValidParentheses: Question {
                 return maxans;
             }
             ```
-
-            **Inputs**
+            ```java
+            int x = findX(")()())))())((((()(())))()((())))((()()()");
             ```
+            What is x?
             ```
         """.trimIndent()
     }
 
     override fun validateAnswer(answer: String): Boolean {
-        return true
+        return answer.toInt() == 20;
     }
 
 }

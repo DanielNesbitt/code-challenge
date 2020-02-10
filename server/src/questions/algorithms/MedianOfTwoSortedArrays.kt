@@ -6,7 +6,6 @@ import com.genedata.questions.Question
 /**
  * @author Daniel Nesbitt
  */
-@NeedsWorks
 class MedianOfTwoSortedArrays: Question {
 
     override fun title(): String {
@@ -63,7 +62,7 @@ class MedianOfTwoSortedArrays: Question {
     }
 
     override fun validateAnswer(answer: String): Boolean {
-        return true
+        return answer.trim().toDouble() == 541.5;
     }
 
 }

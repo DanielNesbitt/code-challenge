@@ -31,14 +31,14 @@ class BinarySearch: Question {
             }
             ```
         ```java
-        int[] a = new int[] { 1, 3, 6, 13, 43, 55, 57, 87 };
+        int[] a = new int[] { 3, 13, 40, 52, 58, 87, 107, 130, 146, 151, 162, 176, 179, 206, 223, 266, 266, 273, 316, 342, 376, 377, 382, 387, 391, 448, 469, 474, 483, 492, 500, 529, 545, 554, 561, 562, 570, 587, 591, 598 };
         ```
-        What is the result of foo(a, 6)?
+        What is the result of foo(a, 391)?
         """.trimIndent()
     }
 
     override fun validateAnswer(answer: String): Boolean {
-        return answer === "6";
+        return answer.trim().toInt() == 24;
     }
 
 }
