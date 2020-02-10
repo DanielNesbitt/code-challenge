@@ -1,6 +1,5 @@
 package com.genedata.questions.algorithms
 
-import com.genedata.questions.NeedsWorks
 import com.genedata.questions.Question
 
 /**
@@ -62,7 +61,7 @@ class MedianOfTwoSortedArrays: Question {
     }
 
     override fun validateAnswer(answer: String): Boolean {
-        return answer.trim().toDouble() == 541.5;
+        return answer.toDouble() == 541.5;
     }
 
 }

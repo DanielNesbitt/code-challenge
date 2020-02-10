@@ -85,6 +85,6 @@ class WhatDoesItDo: Question {
     """.trimIndent()
 
     override fun validateAnswer(answer: String): Boolean {
-        return answer.trim().equals("6", false)
+        return answer.toInt() == 6
     }
 }

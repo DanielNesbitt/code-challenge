@@ -1,6 +1,5 @@
 package com.genedata.questions.algorithms
 
-import com.genedata.questions.NeedsWorks
 import com.genedata.questions.Question
 
 /**

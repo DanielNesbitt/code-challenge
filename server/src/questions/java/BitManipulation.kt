@@ -14,7 +14,7 @@ class BitManipulation: Question {
         return """
             ```java
             public static int foo(int a, int b) {
-                return ~(a << 1 ^ (~b | b >>>1)) 
+                return ~(a << 1 ^ (~b | b >>>1)); 
             }
             ```
             What is the result of foo(7, 8)?
@@ -22,11 +22,7 @@ class BitManipulation: Question {
     }
 
     override fun validateAnswer(answer: String): Boolean {
-        return answer === "6";
-    }
-
-    fun foo(a: Int, b: Int): Int {
-        return (a shl 1 xor (b.inv() or b ushr 1)).inv()
+        return answer.toInt() == 6;
     }
 
 }

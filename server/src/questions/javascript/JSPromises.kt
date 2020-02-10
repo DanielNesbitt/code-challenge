@@ -72,5 +72,5 @@ class JSPromises : Question {
         What value gets printed to the console in line 56?
     """.trimIndent()
 
-    override fun validateAnswer(answer: String): Boolean = answer == "20"
+    override fun validateAnswer(answer: String): Boolean = answer.toInt() == 20
 }

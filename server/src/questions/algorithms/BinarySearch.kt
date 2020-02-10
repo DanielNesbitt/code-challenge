@@ -1,6 +1,5 @@
 package com.genedata.questions.algorithms
 
-import com.genedata.questions.NeedsWorks
 import com.genedata.questions.Question
 
 /**
@@ -38,7 +37,7 @@ class BinarySearch: Question {
     }
 
     override fun validateAnswer(answer: String): Boolean {
-        return answer.trim().toInt() == 24;
+        return answer.toInt() == 24;
     }
 
 }
