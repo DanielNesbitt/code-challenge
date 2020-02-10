@@ -4,8 +4,10 @@ import com.genedata.messages.QuestionEntry
 import com.genedata.messages.QuestionsResponse
 import com.genedata.models.DB
 import com.genedata.models.User
+import com.genedata.questions.algorithms.BinarySearch
 import com.genedata.questions.algorithms.LongestValidParentheses
 import com.genedata.questions.algorithms.MedianOfTwoSortedArrays
+import com.genedata.questions.java.BitManipulation
 import com.genedata.questions.java.JavaStreams
 import com.genedata.questions.java.WhatDoesItDo
 import com.genedata.questions.javascript.JSExpressions
@@ -28,6 +30,7 @@ enum class Questions(private val question: Question) : Question {
 
     // Java
     JAVA_STREAMS(JavaStreams()),
+    BIT_MANIPULATION(BitManipulation()),
     WHAT_DOES_IT_DO(WhatDoesItDo()),
 
     // Javascript
@@ -35,6 +38,7 @@ enum class Questions(private val question: Question) : Question {
     JS_PROMISES(JSPromises()),
 
     // Algorithms
+    BINARY_SEARCH(BinarySearch()),
     MEDIAN_OF_TWO_SORTED_ARRAYS(MedianOfTwoSortedArrays()),
     LONGEST_VALID_PARENS(LongestValidParentheses()),
 

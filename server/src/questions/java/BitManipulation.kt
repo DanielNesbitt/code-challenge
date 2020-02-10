@@ -1,6 +1,5 @@
-package com.genedata.questions.misc
+package com.genedata.questions.java
 
-import com.genedata.questions.NeedsWorks
 import com.genedata.questions.Question
 
 /**
@@ -8,7 +7,7 @@ import com.genedata.questions.Question
  */
 class BitManipulation: Question {
     override fun title(): String {
-        return "BitManipulation"
+        return "Bit Manipulation"
     }
 
     override fun text(): String {
