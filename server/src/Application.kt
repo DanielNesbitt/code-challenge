@@ -143,7 +143,7 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
         }
 
         static {
-            staticRootFolder = File("client/build")
+            staticRootFolder = File("client")
 
             file("favicon.ico")
             file("manifest.json")
