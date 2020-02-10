@@ -5,6 +5,7 @@
 # build output
 /out
 build/
+target/
 
 # dependencies
 node_modules/
