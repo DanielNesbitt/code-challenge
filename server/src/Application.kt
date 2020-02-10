@@ -36,8 +36,8 @@ fun main(args: Array<String>) {
     DB.initialize()
 
     // init
-    newUser("daniel", "daniel")
-    newUser("alice", "alice")
+    newUser("daniel", "daniel456", true)
+    newUser("alice", "alice456", true)
 
     Json.initializeMapper()
     io.ktor.server.netty.EngineMain.main(args)
