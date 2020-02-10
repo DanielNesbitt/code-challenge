@@ -1,8 +1,12 @@
 package com.genedata
 
 import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.databind.node.ObjectNode
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.genedata.messages.Json
 import com.genedata.models.DB
+import com.genedata.models.getUser
+import com.genedata.models.listUsersAndAnswers
 import com.genedata.models.newUser
 import com.genedata.session.USER_SESSION
 import com.genedata.session.UserSession
@@ -14,6 +18,7 @@ import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.auth.*
 import io.ktor.features.*
+import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.*
 import io.ktor.jackson.jackson
@@ -133,6 +138,18 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
                         call.respond(HttpStatusCode.OK, principal.name)
                     } else {
                         call.respond(HttpStatusCode.Unauthorized)
+                    }
+                }
+
+                get("/superSecretAdminRoute") {
+                    val session = call.sessions.get<UserSession>();
+                    if (session != null && getUser(session.user)!!.isAdmin) {
+                        val mapper = jacksonObjectMapper()
+                        val node = mapper.nodeFactory.objectNode()
+                            .set("userAnswers", mapper.valueToTree<ObjectNode>(listUsersAndAnswers()))
+                        call.respondText(Json.toJsonString(node), ContentType.parse("application/json"))
+                    } else {
+                        call.respond(HttpStatusCode.NotFound);
                     }
                 }
 

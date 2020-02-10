@@ -11,6 +11,7 @@ import {PageSpinner} from "./components/PageSpinner";
 import {loginSuccessfulAction, userSelector} from "./routes/Login/LoginModule";
 import {Login} from "./routes/Login/Login";
 import {Home} from "./routes/Home/Home";
+import {Admin} from "./routes/Admin/Admin.js";
 import {questionSelector} from "./routes/Question/QuestionModule";
 import {QuestionView} from "./routes/Question/QuestionView";
 import "./App.css";
@@ -19,6 +20,9 @@ const history = createBrowserHistory();
 
 const Routing: React.FC = () => (
     <Switch>
+        <Route path="/secretAdminRoute">
+            <Admin/>
+        </Route>
         <Route path="/question/:id">
             <QuestionView/>
         </Route>

@@ -27,11 +27,13 @@ object Answers : Table() {
     val correct = bool("correct")
 }
 
-data class User(val id: Long, val name: String, val passwordHash: String) {
+data class User(val id: Long, val name: String, val passwordHash: String, val isAdmin: Boolean) {
     fun validatePassword(password: String): Boolean {
         return BCrypt.checkpw(password, passwordHash)
     }
 }
+
+data class UserAnswer(val name: String, val question: String, val answer: String, val correct: Boolean)
 
 object DB {
 
@@ -43,7 +45,7 @@ object DB {
             val databasePassword = System.getenv("DATABASE_PASSWORD")
             Database.connect(databaseUrl, user = databaseUser, password = databasePassword, driver = "org.h2.Driver")
         } else {
-            Database.connect("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", driver = "org.postgresql.Driver")
+            Database.connect("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", driver = "org.h2.Driver")
         }
         transaction {
             SchemaUtils.createMissingTablesAndColumns(Users, Answers)
@@ -100,8 +102,26 @@ fun getUser(name: String): User? {
             User(
                 id = it[Users.id],
                 name = it[Users.name],
-                passwordHash = it[Users.passwordHash]
+                passwordHash = it[Users.passwordHash],
+                isAdmin = it[Users.admin]
             )
         }.firstOrNull()
+    }
+}
+
+fun listUsersAndAnswers(): List<UserAnswer> {
+    return transaction {
+        Answers.join(Users, JoinType.INNER)
+            .slice(Users.name, Answers.questionId, Answers.text, Answers.correct )
+            .selectAll()
+            .orderBy(Users.name to SortOrder.ASC, Answers.questionId to SortOrder.ASC, Answers.correct to SortOrder.ASC)
+            .map {
+                UserAnswer(
+                    it[Users.name],
+                    Questions.get(it[Answers.questionId]).title(),
+                    it[Answers.text],
+                    it[Answers.correct]
+                )
+            }
     }
 }
