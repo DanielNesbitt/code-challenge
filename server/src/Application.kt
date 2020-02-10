@@ -33,6 +33,12 @@ import java.time.Duration
 import kotlin.collections.set
 
 fun main(args: Array<String>) {
+    io.ktor.server.netty.EngineMain.main(args)
+}
+
+@Suppress("unused") // Referenced in application.conf
+@kotlin.jvm.JvmOverloads
+fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
     DB.initialize()
 
     // init
@@ -40,12 +46,7 @@ fun main(args: Array<String>) {
     newUser("alice", "alice456", true)
 
     Json.initializeMapper()
-    io.ktor.server.netty.EngineMain.main(args)
-}
 
-@Suppress("unused") // Referenced in application.conf
-@kotlin.jvm.JvmOverloads
-fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
     val cm = connectionManagerActor()
     install(Sessions) {
         val random = SecureRandom()
