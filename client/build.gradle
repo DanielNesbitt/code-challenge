@@ -11,10 +11,19 @@ buildscript {
 }
 
 apply plugin: "com.moowork.node"
+apply plugin: "distribution"
 
-task myScript(type: NodeTask) {
-    script = file("src/scripts/my.js")
-    ignoreExitValue = true
+
+project.buildDir = "target"
+
+task build_client(type: YarnTask) {
+    args = ["build"]
+}
+
+distZip {
+    dependsOn build_client
+    from 'build' into 'build'
+    archiveName baseName + '.zip'
 }
 
 node {
