@@ -14,9 +14,8 @@ import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.auth.*
 import io.ktor.features.*
-import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
-import io.ktor.http.content.PartData
+import io.ktor.http.content.*
 import io.ktor.jackson.jackson
 import io.ktor.request.receiveMultipart
 import io.ktor.response.respond
@@ -90,10 +89,6 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
     }
 
     routing {
-        get("/") {
-            call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
-        }
-
         post("/newUser") {
             val multipart = call.receiveMultipart()
             var name = ""
@@ -141,8 +136,12 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
             }
         }
 
-        get("/json/jackson") {
-            call.respond(mapOf("hello" to "world"))
+        static("*") {
+            files("static/css")
+            files("static/js")
+            file("favicon.ico")
+            file("manifest.json")
+            default("index.html")
         }
     }
 }
