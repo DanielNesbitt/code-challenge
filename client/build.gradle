@@ -13,16 +13,13 @@ buildscript {
 apply plugin: "com.moowork.node"
 apply plugin: "distribution"
 
-
-project.buildDir = "target"
-
 task build_client(type: YarnTask) {
     args = ["build"]
 }
 
 distZip {
     dependsOn build_client
-    from 'build' into 'build'
+    from 'build/client' into 'client'
     archiveName baseName + '.zip'
 }
 
