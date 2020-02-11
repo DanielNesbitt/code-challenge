@@ -43,7 +43,7 @@ object DB {
         if (databaseUrl != null) {
             val databaseUser = System.getenv("DATABASE_USER")
             val databasePassword = System.getenv("DATABASE_PASSWORD")
-            Database.connect(databaseUrl, user = databaseUser, password = databasePassword, driver = "org.h2.Driver")
+            Database.connect(databaseUrl, user = databaseUser, password = databasePassword, driver = "org.postgresql.Driver")
         } else {
             Database.connect("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", driver = "org.h2.Driver")
         }
