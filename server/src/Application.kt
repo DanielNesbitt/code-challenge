@@ -178,6 +178,10 @@ fun Application.module(@Suppress("UNUSED_PARAMETER") testing: Boolean = false) {
             static("/") {
                 default("index.html")
             }
+
+            static("/*") {
+                default("index.html")
+            }
         }
 
     }
