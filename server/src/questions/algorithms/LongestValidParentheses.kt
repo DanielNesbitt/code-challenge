@@ -8,13 +8,11 @@ import com.genedata.questions.Question
 class LongestValidParentheses: Question {
 
     override fun title(): String {
-        return "Algorithms: Dynamic Programming"
+        return "Java"
     }
 
     override fun text(): String {
         return """
-            You might have an easier time with this problem if you determine the intent of the algorithm before trying 
-            to solve it based on the input.
             ```java
             public int findX(String s) {
                 int maxans = 0;

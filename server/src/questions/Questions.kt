@@ -4,19 +4,8 @@ import com.genedata.messages.QuestionEntry
 import com.genedata.messages.QuestionsResponse
 import com.genedata.models.DB
 import com.genedata.models.User
-import com.genedata.questions.algorithms.BinarySearch
 import com.genedata.questions.algorithms.LongestValidParentheses
-import com.genedata.questions.algorithms.MedianOfTwoSortedArrays
-import com.genedata.questions.java.BitManipulation
-import com.genedata.questions.java.JavaStreams
-import com.genedata.questions.java.WhatDoesItDo
-import com.genedata.questions.javascript.JSExpressions
-import com.genedata.questions.javascript.JSPromises
-import com.genedata.questions.misc.HaskellFib
-import com.genedata.questions.shell.ShellPositionalArguments
-import com.genedata.questions.sql.SQLCommonJoin
-import com.genedata.questions.sql.SQLFlowControl
-import com.genedata.questions.sql.SQLWindowing
+import com.genedata.questions.questions2.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -29,27 +18,44 @@ private typealias QuestionMessage = com.genedata.messages.Question
 enum class Questions(private val question: Question) : Question {
 
     // Java
-    JAVA_STREAMS(JavaStreams()),
-    BIT_MANIPULATION(BitManipulation()),
-    WHAT_DOES_IT_DO(WhatDoesItDo()),
+//    JAVA_STREAMS(JavaStreams()),
+//    BIT_MANIPULATION(BitManipulation()),
+//    WHAT_DOES_IT_DO(WhatDoesItDo()),
+//
+//    // Javascript
+//    JS_EXPRESSIONS(JSExpressions()),
+//    JS_PROMISES(JSPromises()),
+//
+//    // Algorithms
+//    BINARY_SEARCH(BinarySearch()),
+//    MEDIAN_OF_TWO_SORTED_ARRAYS(MedianOfTwoSortedArrays()),
+//    LONGEST_VALID_PARENS(LongestValidParentheses()),
+//
+//    // SQL
+//    SQL_COMMON_JOIN(SQLCommonJoin()),
+//    SQL_WINDOWING(SQLWindowing()),
+//    SQL_FLOW_CONTROL(SQLFlowControl()),
+//
+//    // Misc
+//    SHELL_POS_ARGS(ShellPositionalArguments()),
+//    HASKELL_FIB(HaskellFib())
+//    ;
+
+    WHAT_DOES_IT_DO(WhatIsIt()),
+    BIT_MANIPULATION(BitManipulation2()),
 
     // Javascript
-    JS_EXPRESSIONS(JSExpressions()),
-    JS_PROMISES(JSPromises()),
+    JS_PROMISES(JSPromises2()),
 
     // Algorithms
-    BINARY_SEARCH(BinarySearch()),
-    MEDIAN_OF_TWO_SORTED_ARRAYS(MedianOfTwoSortedArrays()),
+    HEAPSORT(Heapsort()),
+    LIS(DP()),
     LONGEST_VALID_PARENS(LongestValidParentheses()),
 
-    // SQL
-    SQL_COMMON_JOIN(SQLCommonJoin()),
-    SQL_WINDOWING(SQLWindowing()),
-    SQL_FLOW_CONTROL(SQLFlowControl()),
-
     // Misc
-    SHELL_POS_ARGS(ShellPositionalArguments()),
-    HASKELL_FIB(HaskellFib())
+    SQL_COMMON_JOIN(SQL()),
+    CSS_SELECTORS(CSSSelectors()),
+    ERLANG(Erlang())
     ;
 
     override fun title(): String {
