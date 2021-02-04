@@ -49,9 +49,10 @@ class Heapsort : Question {
                 }
             }
                     
-            int[] a = {7, 55, 33, 88, 4, 79, 94, 69, 86, 31, 98, 5, 43, 49, 87};            
+            int[] a = {7, 55, 33, 88, 4, 79, 94, 69, 86, 31, 98, 5, 43, 49, 87};
+            foo(a);
             ```
-            What is the result of foo(a)?
+            What is the result of a[0]?
         """.trimIndent()
     }
 

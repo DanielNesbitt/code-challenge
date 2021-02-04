@@ -14,7 +14,7 @@ class BitManipulation2 : Question {
         return """
             ```java
             public static int foo(int a, int b) {
-                ~(~a >> 2 & b) ^ (b << 1 | a);
+                return ~(~a >> 2 & b) ^ (b << 1 | a);
             }
             ```
             What is the result of foo(5, 9)?

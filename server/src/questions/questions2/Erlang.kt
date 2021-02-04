@@ -13,14 +13,14 @@ class Erlang : Question {
     override fun text(): String {
         return """
             ```erlang
-            foo([]) -> [];
+            foo([]) -> [].
             foo([P|R]) -> foo([F || F <- R, F < P]) ++ [P] ++ foo([B || B <- R, B >= P]).
             ```
-           What is this?
+           What is foo([2,1,5])?
         """.trimIndent()
     }
 
     override fun validateAnswer(answer: String): Boolean {
-        return answer.trim().toLowerCase() == "quicksort"
+        return answer.trim() == "[1,2,5]" || answer.trim() == "[1, 2, 5]";
     }
 }
