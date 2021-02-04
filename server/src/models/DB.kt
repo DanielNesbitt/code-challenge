@@ -33,7 +33,7 @@ data class User(val id: Long, val name: String, val passwordHash: String, val is
     }
 }
 
-data class UserAnswer(val name: String, val question: String, val answer: String, val correct: Boolean)
+data class UserAnswer(val name: String, val questionId: Long, val question: String, val answer: String, val correct: Boolean)
 
 object DB {
 
@@ -118,6 +118,7 @@ fun listUsersAndAnswers(): List<UserAnswer> {
             .map {
                 UserAnswer(
                     it[Users.name],
+                    it[Answers.questionId],
                     Questions.get(it[Answers.questionId]).title(),
                     it[Answers.text],
                     it[Answers.correct]
